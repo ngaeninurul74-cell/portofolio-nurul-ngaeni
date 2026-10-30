@@ -68,8 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
 
       const filterValue = btn.getAttribute('data-filter');
+      const currentGalleryItems = document.querySelectorAll('.gallery-item');
 
-      galleryItems.forEach(item => {
+      currentGalleryItems.forEach(item => {
         const itemCategory = item.getAttribute('data-category');
         if (filterValue === 'all' || itemCategory === filterValue) {
           item.classList.remove('hide');

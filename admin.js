@@ -1,6 +1,6 @@
 /**
  * Nurul Ngaeni Portfolio - CMS Admin Dashboard Logic
- * Handles form population, real-time live-sync, exporting, importing, and resetting.
+ * Handles form population, real-time live-sync, photo management, exporting, importing, and resetting.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('CMSManager tidak ditemukan. Pastikan cms-manager.js dimuat.');
     return;
   }
+
+  const categoryMeta = {
+    mc: { label: 'MC Event', icon: 'bi bi-mic' },
+    moderator: { label: 'Moderator', icon: 'bi bi-chat-square-quote' },
+    speaker: { label: 'Narasumber', icon: 'bi bi-mortarboard' },
+    modeling: { label: 'Runway Model', icon: 'bi bi-camera' },
+    organizations: { label: 'Organisasi', icon: 'bi bi-people' }
+  };
 
   // DOM Elements - Tab Switching
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -25,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Populate Form Fields from CMS Data
+  // Populate Form Fields & Photos from CMS Data
   function populateForm() {
     const data = CMSManager.getData();
     if (!data) return;
@@ -47,6 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
       setVal('personal_whatsapp', data.personal.whatsapp);
       setVal('personal_email', data.personal.email);
       setVal('personal_linkedin', data.personal.linkedin);
+
+      // Profile photo previews
+      const heroPreview = document.getElementById('preview_heroImage');
+      if (heroPreview && data.personal.heroImage) {
+        heroPreview.src = data.personal.heroImage;
+      }
+
+      const aboutPreview = document.getElementById('preview_aboutImage');
+      if (aboutPreview && data.personal.aboutImage) {
+        aboutPreview.src = data.personal.aboutImage;
+      }
+
+      const closingPreview = document.getElementById('preview_closingImage');
+      if (closingPreview && data.personal.closingImage) {
+        closingPreview.src = data.personal.closingImage;
+      }
     }
 
     // 2. About
@@ -103,6 +127,78 @@ document.addEventListener('DOMContentLoaded', () => {
       setVal('contact_title', data.contact.title);
       setVal('contact_subtitle', data.contact.subtitle);
     }
+
+    // 8. Gallery List
+    renderGalleryList();
+  }
+
+  // Render the gallery photo collection in admin
+  function renderGalleryList() {
+    const data = CMSManager.getData();
+    const grid = document.getElementById('adminGalleryGrid');
+    const countSubtitle = document.getElementById('galleryCountSubtitle');
+    if (!grid) return;
+
+    const gallery = Array.isArray(data.gallery) ? data.gallery : [];
+    if (countSubtitle) {
+      countSubtitle.textContent = `Total Koleksi: ${gallery.length} Foto dokumentasi acara`;
+    }
+
+    if (gallery.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: var(--text-muted);">
+          <i class="bi bi-images" style="font-size: 2.5rem; color: var(--accent-gold); display: block; margin-bottom: 8px;"></i>
+          <p>Belum ada foto di galeri. Gunakan formulir di atas untuk menambahkan foto baru.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    gallery.forEach(item => {
+      const meta = categoryMeta[item.category] || { label: item.category, icon: 'bi bi-image' };
+      html += `
+        <div class="gallery-admin-card" data-id="${item.id}">
+          <div class="gallery-admin-thumb">
+            <img src="${item.image}" alt="${item.title}" loading="lazy">
+            <span class="gallery-admin-cat">
+              <i class="${meta.icon}"></i>
+              <span>${meta.label}</span>
+            </span>
+          </div>
+          <div class="gallery-admin-info">
+            <h4 class="gallery-admin-title">${item.title}</h4>
+            <p class="gallery-admin-desc">${item.desc || 'Tanpa keterangan'}</p>
+          </div>
+          <div class="gallery-admin-footer">
+            <button type="button" class="btn btn-danger-soft btn-delete-photo" data-id="${item.id}" title="Hapus foto dari galeri">
+              <i class="bi bi-trash3-fill"></i>
+              <span>Hapus</span>
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+    grid.innerHTML = html;
+
+    // Attach Delete Handlers
+    const deleteButtons = grid.querySelectorAll('.btn-delete-photo');
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus foto ini dari galeri portofolio?');
+        if (confirmDelete) {
+          const success = CMSManager.deleteGalleryPhoto(id);
+          if (success) {
+            CMSManager.showToast('Foto berhasil dihapus dari galeri.');
+            renderGalleryList();
+          } else {
+            CMSManager.showToast('Gagal menghapus foto.', 'error');
+          }
+        }
+      });
+    });
   }
 
   // Collect Current Form Values into structured Data object
@@ -206,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetBtn = document.getElementById('btnResetDefault');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      const confirmReset = window.confirm('Apakah Anda yakin ingin mengembalikan semua data teks ke format awal bawaan? Perubahan yang belum disimpan sebagai cadangan akan dihapus.');
+      const confirmReset = window.confirm('Apakah Anda yakin ingin mengembalikan semua data teks dan foto ke format awal bawaan?');
       if (confirmReset) {
         CMSManager.resetData();
         populateForm();
@@ -243,11 +339,137 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
       reader.readAsText(file);
-      // Reset input value so same file can be re-imported
       importInput.value = '';
     });
   }
 
+  // --- Photo Upload Handlers ---
+  function setupPhotoManagement() {
+    // 1. Profile Photos Upload (Hero, About, Closing)
+    const handleProfileUpload = (inputId, previewId, photoType) => {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      if (!input || !preview) return;
+
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          CMSManager.showToast('Mengompres dan memproses gambar...', 'info');
+          const dataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.85);
+          preview.src = dataUrl;
+          CMSManager.updateProfilePhoto(photoType, dataUrl);
+          CMSManager.showToast('Foto profil berhasil diperbarui!');
+        } catch (err) {
+          CMSManager.showToast(err.message, 'error');
+        }
+        input.value = '';
+      });
+    };
+
+    handleProfileUpload('file_heroImage', 'preview_heroImage', 'heroImage');
+    handleProfileUpload('file_aboutImage', 'preview_aboutImage', 'aboutImage');
+    handleProfileUpload('file_closingImage', 'preview_closingImage', 'closingImage');
+
+    // Reset profile photos to default
+    const bindResetPhoto = (btnId, previewId, photoType) => {
+      const btn = document.getElementById(btnId);
+      const preview = document.getElementById(previewId);
+      if (btn && preview) {
+        btn.addEventListener('click', () => {
+          CMSManager.resetProfilePhoto(photoType);
+          const data = CMSManager.getData();
+          if (data.personal && data.personal[photoType]) {
+            preview.src = data.personal[photoType];
+          }
+          CMSManager.showToast('Foto dikembalikan ke versi bawaan.');
+        });
+      }
+    };
+
+    bindResetPhoto('btnResetHeroImg', 'preview_heroImage', 'heroImage');
+    bindResetPhoto('btnResetAboutImg', 'preview_aboutImage', 'aboutImage');
+    bindResetPhoto('btnResetClosingImg', 'preview_closingImage', 'closingImage');
+
+    // 2. Add New Gallery Photo
+    const newGalleryFileInput = document.getElementById('newGalleryFile');
+    const newPhotoPreviewBox = document.getElementById('newPhotoPreviewBox');
+    const newPhotoPreviewImg = document.getElementById('newPhotoPreviewImg');
+    const btnAddPhoto = document.getElementById('btnAddPhotoToGallery');
+    let selectedGalleryImageDataUrl = null;
+
+    if (newGalleryFileInput) {
+      newGalleryFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          CMSManager.showToast('Mengoptimalkan pratinjau gambar...', 'info');
+          selectedGalleryImageDataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
+          if (newPhotoPreviewImg && newPhotoPreviewBox) {
+            newPhotoPreviewImg.src = selectedGalleryImageDataUrl;
+            newPhotoPreviewBox.style.display = 'block';
+          }
+        } catch (err) {
+          CMSManager.showToast(err.message, 'error');
+          selectedGalleryImageDataUrl = null;
+        }
+      });
+    }
+
+    if (btnAddPhoto) {
+      btnAddPhoto.addEventListener('click', () => {
+        const titleInput = document.getElementById('newPhotoTitle');
+        const descInput = document.getElementById('newPhotoDesc');
+        const catSelect = document.getElementById('newPhotoCategory');
+
+        const title = titleInput ? titleInput.value.trim() : '';
+        const desc = descInput ? descInput.value.trim() : '';
+        const category = catSelect ? catSelect.value : 'mc';
+
+        if (!selectedGalleryImageDataUrl) {
+          CMSManager.showToast('Silakan pilih berkas foto terlebih dahulu.', 'error');
+          return;
+        }
+
+        if (!title) {
+          CMSManager.showToast('Silakan isi judul atau nama kegiatan untuk foto ini.', 'error');
+          if (titleInput) titleInput.focus();
+          return;
+        }
+
+        const meta = categoryMeta[category] || { label: 'Galeri', icon: 'bi bi-image' };
+
+        const photoObj = {
+          category: category,
+          categoryLabel: meta.label,
+          categoryIcon: meta.icon,
+          title: title,
+          desc: desc,
+          image: selectedGalleryImageDataUrl
+        };
+
+        const success = CMSManager.addGalleryPhoto(photoObj);
+        if (success) {
+          CMSManager.showToast('Foto baru berhasil ditambahkan ke galeri portofolio!');
+          // Reset form
+          if (titleInput) titleInput.value = '';
+          if (descInput) descInput.value = '';
+          if (newGalleryFileInput) newGalleryFileInput.value = '';
+          if (newPhotoPreviewBox) newPhotoPreviewBox.style.display = 'none';
+          selectedGalleryImageDataUrl = null;
+
+          // Re-render gallery list
+          renderGalleryList();
+        } else {
+          CMSManager.showToast('Gagal menambahkan foto ke galeri.', 'error');
+        }
+      });
+    }
+  }
+
   // Initialize
   populateForm();
+  setupPhotoManagement();
 });

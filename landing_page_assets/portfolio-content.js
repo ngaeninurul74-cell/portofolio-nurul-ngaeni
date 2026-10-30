@@ -207,7 +207,149 @@ const portfolioData = {
     "tag": "KOLABORASI & BOOKING",
     "title": "Let's Connect & Create Impact",
     "subtitle": "Terbuka terhadap kolaborasi acara sebagai Master of Ceremony (MC), Moderator seminar, pemateri sharing session, program kepemudaan, serta proyek manajemen pemasaran."
-  }
+  },
+  "gallery": [
+    {
+      "id": "mc-1",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC UMKM Expo by TiketHub",
+      "desc": "Memandu expo pameran pelaku ekonomi kreatif dan UMKM lokal.",
+      "image": "landing_page_assets/mc/mc-umkm-expo-tikethub.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-umkm-expo-tikethub.webp"
+    },
+    {
+      "id": "mc-2",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC Karnaval Budaya Desa Trucuk",
+      "desc": "Pemandu utama perayaan pawai budaya masyarakat Desa Trucuk.",
+      "image": "landing_page_assets/mc/mc-karnaval-budaya-trucuk.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-karnaval-budaya-trucuk.webp"
+    },
+    {
+      "id": "mc-3",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC FEB Berprestasi 2025",
+      "desc": "Agenda tahunan apresiasi insan berprestasi FEB UNY.",
+      "image": "landing_page_assets/mc/mc-feb-berprestasi-uny.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-feb-berprestasi-uny.webp"
+    },
+    {
+      "id": "mc-4",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC Joho Morfosis",
+      "desc": "Acara kolaboratif kepemudaan dan regenerasi komunitas Joho.",
+      "image": "landing_page_assets/mc/mc-joho-morfosis.png",
+      "imageWebp": "landing_page_assets/mc/mc-joho-morfosis.webp"
+    },
+    {
+      "id": "mod-1",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Merti Desa bersama Bupati Klaten",
+      "desc": "Memandu diskusi kebudayaan dan pembangunan desa bersama pimpinan daerah.",
+      "image": "landing_page_assets/moderator/mod-merti-desa-bupati.png",
+      "imageWebp": "landing_page_assets/moderator/mod-merti-desa-bupati.webp"
+    },
+    {
+      "id": "mod-2",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Talkshow Kewirausahaan",
+      "desc": "Menggali strategi inovasi bisnis generasi muda bersama praktisi industri.",
+      "image": "landing_page_assets/moderator/mod-talkshow-kewirausahaan.png",
+      "imageWebp": "landing_page_assets/moderator/mod-talkshow-kewirausahaan.webp"
+    },
+    {
+      "id": "mod-3",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Moderator FEB Berprestasi",
+      "desc": "Sesi dialog inspiratif mahasiswa berprestasi dan dosen pembina.",
+      "image": "landing_page_assets/moderator/mod-feb-berprestasi.png",
+      "imageWebp": "landing_page_assets/moderator/mod-feb-berprestasi.webp"
+    },
+    {
+      "id": "spk-1",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Guru Tamu Bidang Marketing",
+      "desc": "Pembelajaran strategi penjualan dan promosi untuk 64 siswa SMKN 1 Jogonalan.",
+      "image": "landing_page_assets/speaker/speaker-guru-tamu-marketing.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-guru-tamu-marketing.webp"
+    },
+    {
+      "id": "spk-2",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Guru Tamu Broadcasting",
+      "desc": "Praktik vocal clarity dan penyiaran di SMKN 1 Klaten.",
+      "image": "landing_page_assets/speaker/speaker-guru-tamu-broadcasting.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-guru-tamu-broadcasting.webp"
+    },
+    {
+      "id": "spk-3",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Narasumber LDKS (520 Siswa)",
+      "desc": "Pembekalan kepemimpinan dan manajemen organisasi SMKN 2 Klaten.",
+      "image": "landing_page_assets/speaker/speaker-ldks-smkn2-klaten.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-ldks-smkn2-klaten.webp"
+    },
+    {
+      "id": "modl-1",
+      "category": "modeling",
+      "categoryLabel": "Runway Model",
+      "categoryIcon": "bi bi-camera",
+      "title": "Klaten Fashion Festival",
+      "desc": "Representasi busana desainer lokal pada panggung KFF.",
+      "image": "landing_page_assets/modeling/model-klaten-fashion-festival.png",
+      "imageWebp": "landing_page_assets/modeling/model-klaten-fashion-festival.webp"
+    },
+    {
+      "id": "modl-2",
+      "category": "modeling",
+      "categoryLabel": "Runway Model",
+      "categoryIcon": "bi bi-camera",
+      "title": "Klaten Lurik Karnival",
+      "desc": "Mempromosikan warisan wastra lurik khas Kabupaten Klaten.",
+      "image": "landing_page_assets/modeling/model-klaten-lurik-karnival.png",
+      "imageWebp": "landing_page_assets/modeling/model-klaten-lurik-karnival.webp"
+    },
+    {
+      "id": "org-1",
+      "category": "organizations",
+      "categoryLabel": "Organisasi",
+      "categoryIcon": "bi bi-people",
+      "title": "Dewan Kerja Cabang Klaten",
+      "desc": "Ketua Bidang Pembinaan & Pengembangan Pramuka Penegak/Pandega.",
+      "image": "landing_page_assets/organizations/org-dewan-kerja-cabang.jpg",
+      "imageWebp": "landing_page_assets/organizations/org-dewan-kerja-cabang.webp"
+    },
+    {
+      "id": "org-2",
+      "category": "organizations",
+      "categoryLabel": "Duta",
+      "categoryIcon": "bi bi-shield-check",
+      "title": "Duta Anti-Bullying",
+      "desc": "Sekretaris 1 dalam sosialisasi lingkungan sekolah ramah anak.",
+      "image": "landing_page_assets/organizations/org-duta-anti-bullying.jpg",
+      "imageWebp": "landing_page_assets/organizations/org-duta-anti-bullying.webp"
+    }
+  ]
 };
 
 if (typeof window !== 'undefined') {

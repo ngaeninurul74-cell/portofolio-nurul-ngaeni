@@ -1,9 +1,10 @@
 /**
  * Nurul Ngaeni Portfolio CMS & Content Manager
- * Provides dual-mode editing:
- * 1. Admin Dashboard (admin.html) with structured forms
+ * Features:
+ * 1. Admin Dashboard (admin.html) with structured text & photo manager
  * 2. Visual Inline Quick-Editor directly on the landing page (index.html)
- * 3. Real-time multi-tab synchronization via localStorage and BroadcastChannel
+ * 3. Photo Upload with automatic Canvas compression (max 1200px, WebP/JPEG)
+ * 4. Real-time multi-tab synchronization via localStorage and BroadcastChannel
  */
 
 (function (root, factory) {
@@ -58,6 +59,52 @@
 
   const CMS = {
     /**
+     * Compress and resize an image file using HTML5 Canvas
+     * Keeps images under ~150KB to preserve localStorage quota
+     */
+    compressImage: function (file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith('image/')) {
+          reject(new Error('File yang diunggah bukan gambar valid.'));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+              if (width / height > maxWidth / maxHeight) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              } else {
+                width = Math.round((width * maxHeight) / height);
+                maxHeight = height = maxHeight;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Compress to JPEG for high compatibility and small footprint
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve(dataUrl);
+          };
+          img.onerror = () => reject(new Error('Gagal memuat gambar ke canvas.'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+        reader.readAsDataURL(file);
+      });
+    },
+
+    /**
      * Get active portfolio data (localStorage or fallback to default)
      */
     getData: function () {
@@ -66,7 +113,6 @@
         if (stored) {
           const parsed = JSON.parse(stored);
           const defaults = getDefaultData();
-          // Merge to ensure no missing structure
           return Object.assign({}, defaults, parsed);
         }
       } catch (e) {
@@ -89,6 +135,9 @@
         return true;
       } catch (e) {
         console.error('Error saving portfolio data:', e);
+        if (e.name === 'QuotaExceededError' || e.code === 22) {
+          alert('Penyimpanan browser penuh. Coba hapus beberapa foto atau kurangi ukuran gambar.');
+        }
         return false;
       }
     },
@@ -108,6 +157,64 @@
         console.error('Error resetting portfolio data:', e);
         return false;
       }
+    },
+
+    /**
+     * Add a photo to the gallery
+     */
+    addGalleryPhoto: function (photoObj) {
+      const data = this.getData();
+      if (!Array.isArray(data.gallery)) {
+        data.gallery = getDefaultData().gallery || [];
+      }
+
+      const newPhoto = {
+        id: 'photo-' + Date.now(),
+        category: photoObj.category || 'mc',
+        categoryLabel: photoObj.categoryLabel || 'Galeri',
+        categoryIcon: photoObj.categoryIcon || 'bi bi-image',
+        title: photoObj.title || 'Foto Baru',
+        desc: photoObj.desc || '',
+        image: photoObj.image
+      };
+
+      // Add to beginning of gallery
+      data.gallery.unshift(newPhoto);
+      return this.saveData(data);
+    },
+
+    /**
+     * Delete a photo from the gallery by ID
+     */
+    deleteGalleryPhoto: function (photoId) {
+      const data = this.getData();
+      if (!Array.isArray(data.gallery)) return false;
+
+      data.gallery = data.gallery.filter(p => p.id !== photoId);
+      return this.saveData(data);
+    },
+
+    /**
+     * Update a profile photo (hero, about, closing)
+     */
+    updateProfilePhoto: function (type, dataUrl) {
+      const data = this.getData();
+      if (!data.personal) data.personal = {};
+      data.personal[type] = dataUrl;
+      return this.saveData(data);
+    },
+
+    /**
+     * Reset a profile photo to default
+     */
+    resetProfilePhoto: function (type) {
+      const defaults = getDefaultData();
+      const data = this.getData();
+      if (defaults.personal && defaults.personal[type]) {
+        data.personal[type] = defaults.personal[type];
+        return this.saveData(data);
+      }
+      return false;
     },
 
     /**
@@ -141,7 +248,7 @@
     },
 
     /**
-     * Hydrate DOM elements with active CMS data
+     * Hydrate DOM elements with active CMS data (Text, Stats, Profile Photos, and Gallery)
      */
     hydrateLandingPage: function () {
       const data = this.getData();
@@ -164,9 +271,30 @@
         }
       });
 
-      // 2. Personal Links
+      // 2. Personal Profile Photos
       if (data.personal) {
         const p = data.personal;
+        const heroImg = document.getElementById('heroImage');
+        if (heroImg && p.heroImage) {
+          heroImg.src = p.heroImage;
+          const heroSource = heroImg.closest('picture')?.querySelector('source');
+          if (heroSource) heroSource.srcset = p.heroImageWebp || p.heroImage;
+        }
+
+        const aboutImg = document.getElementById('aboutImage') || document.querySelector('.about-photo-card img');
+        if (aboutImg && p.aboutImage) {
+          aboutImg.src = p.aboutImage;
+          const aboutSource = aboutImg.closest('picture')?.querySelector('source');
+          if (aboutSource) aboutSource.srcset = p.aboutImageWebp || p.aboutImage;
+        }
+
+        const closingImg = document.getElementById('closingImage') || document.querySelector('.contact-photo-side img');
+        if (closingImg && p.closingImage) {
+          closingImg.src = p.closingImage;
+          const closingSource = closingImg.closest('picture')?.querySelector('source');
+          if (closingSource) closingSource.srcset = p.closingImageWebp || p.closingImage;
+        }
+
         // WhatsApp links
         if (p.whatsappLink || p.whatsapp) {
           const waLinks = document.querySelectorAll('a[href*="wa.me"]');
@@ -240,6 +368,58 @@
             if (desc) desc.textContent = proj.description;
           }
         });
+      }
+
+      // 6. Dynamic Gallery Hydration
+      const galleryGrid = document.getElementById('galleryGrid');
+      if (galleryGrid && Array.isArray(data.gallery) && data.gallery.length > 0) {
+        // Determine active filter
+        const activeFilterBtn = document.querySelector('.filter-btn.active');
+        const activeFilter = activeFilterBtn ? activeFilterBtn.getAttribute('data-filter') : 'all';
+
+        let html = '';
+        data.gallery.forEach(item => {
+          const isHidden = (activeFilter !== 'all' && item.category !== activeFilter);
+          const hideClass = isHidden ? ' hide' : '';
+          const pictureHtml = item.imageWebp
+            ? `<picture><source srcset="${item.imageWebp}" type="image/webp"><img src="${item.image}" alt="${item.title}" loading="lazy"></picture>`
+            : `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+
+          html += `
+            <div class="gallery-item${hideClass}" data-category="${item.category}">
+              <div class="gallery-card">
+                ${pictureHtml}
+                <div class="gallery-overlay">
+                  <span class="cat-pill"><i class="${item.categoryIcon || 'bi bi-image'}"></i> ${item.categoryLabel || item.category}</span>
+                  <h4>${item.title}</h4>
+                  <p>${item.desc || ''}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        galleryGrid.innerHTML = html;
+
+        // Re-attach lightbox handlers to dynamically rendered cards
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+
+        if (lightboxModal && lightboxImage && lightboxCaption) {
+          const cards = galleryGrid.querySelectorAll('.gallery-card');
+          cards.forEach(card => {
+            card.addEventListener('click', () => {
+              const img = card.querySelector('img');
+              const title = card.querySelector('h4');
+              if (img) {
+                lightboxImage.src = img.src;
+                lightboxCaption.textContent = title ? title.textContent : '';
+                lightboxModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+              }
+            });
+          });
+        }
       }
     },
 

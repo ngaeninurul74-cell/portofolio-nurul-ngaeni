@@ -98,6 +98,12 @@
             <span>Kontak & Booking</span>
           </button>
         </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-photos">
+            <i class="bi bi-images"></i>
+            <span>Kelola Foto & Galeri</span>
+          </button>
+        </li>
       </ul>
 
       <div class="sidebar-status-box">
@@ -588,6 +594,147 @@
               <label class="form-label" for="contact_subtitle"><i class="bi bi-text-paragraph"></i> Deskripsi Ajakan Kolaborasi</label>
               <textarea id="contact_subtitle" class="form-textarea" rows="4"></textarea>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: Kelola Foto & Galeri -->
+      <section id="tab-photos" class="tab-panel">
+        <!-- Profile Photos -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-person-bounding-box"></i> Foto Profil & Potret Utama</h2>
+              <p class="card-subtitle">Ganti foto potret Nurul yang tampil pada hero cover, bagian tentang saya, dan kartu penutup.</p>
+            </div>
+          </div>
+
+          <div class="photo-upload-grid">
+            <!-- Hero Photo -->
+            <div class="profile-photo-card">
+              <span class="profile-photo-title"><i class="bi bi-star-fill" style="color:var(--accent-gold);"></i> Foto Hero Cover</span>
+              <div class="profile-photo-preview">
+                <img id="preview_heroImage" src="landing_page_assets/hero/hero-nurul-cover.png" alt="Hero Portrait">
+              </div>
+              <div class="profile-photo-actions">
+                <label for="file_heroImage" class="btn btn-primary">
+                  <i class="bi bi-upload"></i>
+                  <span>Ganti Foto</span>
+                </label>
+                <input type="file" id="file_heroImage" accept="image/*" style="display:none;">
+                <button type="button" class="btn btn-outline" id="btnResetHeroImg" title="Kembalikan ke foto bawaan">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- About Photo -->
+            <div class="profile-photo-card">
+              <span class="profile-photo-title"><i class="bi bi-person-badge-fill" style="color:var(--accent-gold);"></i> Foto Formal Tentang</span>
+              <div class="profile-photo-preview">
+                <img id="preview_aboutImage" src="landing_page_assets/about/profile-formal.png" alt="About Formal Portrait">
+              </div>
+              <div class="profile-photo-actions">
+                <label for="file_aboutImage" class="btn btn-primary">
+                  <i class="bi bi-upload"></i>
+                  <span>Ganti Foto</span>
+                </label>
+                <input type="file" id="file_aboutImage" accept="image/*" style="display:none;">
+                <button type="button" class="btn btn-outline" id="btnResetAboutImg" title="Kembalikan ke foto bawaan">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Closing Contact Photo -->
+            <div class="profile-photo-card">
+              <span class="profile-photo-title"><i class="bi bi-envelope-heart-fill" style="color:var(--accent-gold);"></i> Foto Kartu Kontak</span>
+              <div class="profile-photo-preview">
+                <img id="preview_closingImage" src="landing_page_assets/hero/hero-nurul-closing.png" alt="Closing Portrait">
+              </div>
+              <div class="profile-photo-actions">
+                <label for="file_closingImage" class="btn btn-primary">
+                  <i class="bi bi-upload"></i>
+                  <span>Ganti Foto</span>
+                </label>
+                <input type="file" id="file_closingImage" accept="image/*" style="display:none;">
+                <button type="button" class="btn btn-outline" id="btnResetClosingImg" title="Kembalikan ke foto bawaan">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add New Photo to Gallery -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-plus-circle-fill"></i> Tambah Foto Baru ke Galeri Portofolio</h2>
+              <p class="card-subtitle">Unggah dokumentasi foto acara terbaru dari galeri HP atau laptop. Foto otomatis dikompres agar hemat penyimpanan.</p>
+            </div>
+          </div>
+
+          <form id="formAddGalleryPhoto" onsubmit="return false;">
+            <div class="form-grid">
+              <div class="form-group span-2">
+                <label class="form-label"><i class="bi bi-image"></i> Pilih Berkas Foto</label>
+                <label for="newGalleryFile" class="photo-dropzone" id="galleryDropzone">
+                  <i class="bi bi-cloud-arrow-up-fill dropzone-icon"></i>
+                  <div class="dropzone-text">
+                    <strong>Klik di sini atau seret foto ke dalam area ini</strong>
+                    <span>Format didukung: JPG, PNG, WebP (otomatis dioptimalkan)</span>
+                  </div>
+                </label>
+                <input type="file" id="newGalleryFile" accept="image/*" style="display:none;">
+                
+                <div class="new-photo-preview-box" id="newPhotoPreviewBox">
+                  <img id="newPhotoPreviewImg" src="" alt="Pratinjau Foto Baru">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="newPhotoCategory"><i class="bi bi-tags-fill"></i> Kategori Acara</label>
+                <select id="newPhotoCategory" class="form-input">
+                  <option value="mc">Master of Ceremony (MC)</option>
+                  <option value="moderator">Moderator Diskusi & Talkshow</option>
+                  <option value="speaker">Narasumber & Guru Tamu</option>
+                  <option value="modeling">Muse & Fashion Model</option>
+                  <option value="organizations">Organisasi & Komunitas</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="newPhotoTitle"><i class="bi bi-type-bold"></i> Judul / Nama Kegiatan</label>
+                <input type="text" id="newPhotoTitle" class="form-input" placeholder="Contoh: MC Seminar Nasional Technopreneur 2026">
+              </div>
+
+              <div class="form-group span-2">
+                <label class="form-label" for="newPhotoDesc"><i class="bi bi-card-text"></i> Keterangan Singkat Acara</label>
+                <textarea id="newPhotoDesc" class="form-textarea" rows="2" placeholder="Contoh: Memandu 400+ peserta mahasiswa dan praktisi di Auditorium UNY."></textarea>
+              </div>
+
+              <div class="form-group span-2" style="display: flex; justify-content: flex-end;">
+                <button type="button" id="btnAddPhotoToGallery" class="btn btn-primary">
+                  <i class="bi bi-plus-circle-fill"></i>
+                  <span>Tambahkan Foto ke Galeri</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Current Gallery Photo List & Delete -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-grid-3x3-gap-fill"></i> Koleksi Foto Galeri Saat Ini</h2>
+              <p class="card-subtitle" id="galleryCountSubtitle">Memuat koleksi foto...</p>
+            </div>
+          </div>
+
+          <div class="gallery-admin-grid" id="adminGalleryGrid">
+            <!-- Rendered dynamically by admin.js -->
           </div>
         </div>
       </section>
