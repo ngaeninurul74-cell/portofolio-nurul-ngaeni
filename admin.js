@@ -557,9 +557,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const original = CMSManager.getData();
     const data = JSON.parse(JSON.stringify(original));
 
-    const getVal = (id, fallback) => {
+    const getVal = (id, fallback, maxLen = 1000) => {
       const el = document.getElementById(id);
-      return el ? el.value.trim() : fallback;
+      if (!el) return fallback;
+      const val = el.value.trim();
+      return val.length > maxLen ? val.slice(0, maxLen) : val;
     };
 
     // 1. Personal
@@ -575,6 +577,23 @@ document.addEventListener('DOMContentLoaded', () => {
     data.personal.linkedin = getVal('personal_linkedin', data.personal.linkedin);
     if (data.personal.whatsapp) {
       data.personal.whatsappLink = `https://wa.me/${data.personal.whatsapp.replace(/[^0-9]/g, '')}`;
+    }
+
+    // Sync profile photo previews
+    const heroPreview = document.getElementById('preview_heroImage');
+    if (heroPreview && heroPreview.src && !heroPreview.src.endsWith('#')) {
+      data.personal.heroImage = heroPreview.src;
+      data.personal.heroImageWebp = heroPreview.src;
+    }
+    const aboutPreview = document.getElementById('preview_aboutImage');
+    if (aboutPreview && aboutPreview.src && !aboutPreview.src.endsWith('#')) {
+      data.personal.aboutImage = aboutPreview.src;
+      data.personal.aboutImageWebp = aboutPreview.src;
+    }
+    const closingPreview = document.getElementById('preview_closingImage');
+    if (closingPreview && closingPreview.src && !closingPreview.src.endsWith('#')) {
+      data.personal.closingImage = closingPreview.src;
+      data.personal.closingImageWebp = closingPreview.src;
     }
 
     // 2. About
@@ -710,6 +729,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const hidePublishModal = () => {
     if (publishModal) publishModal.style.display = 'none';
   };
+
+  const btnClearSavedToken = document.getElementById('btnClearSavedToken');
+  if (btnClearSavedToken) {
+    btnClearSavedToken.addEventListener('click', () => {
+      localStorage.removeItem(GH_TOKEN_KEY);
+      if (ghTokenInput) ghTokenInput.value = '';
+      CMSManager.showToast('Token GitHub berhasil dihapus dari browser ini.');
+    });
+  }
 
   if (btnPublishInternet) btnPublishInternet.addEventListener('click', showPublishModal);
   if (btnTriggerModalFromSettings) btnTriggerModalFromSettings.addEventListener('click', showPublishModal);

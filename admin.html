@@ -4,6 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com;">
   <title>CMS Pengelola Konten & Foto - Portofolio Nurul Ngaeni</title>
   <meta name="description" content="Panel pengelola dan pengeditan konten portofolio Nurul Ngaeni secara langsung dan real-time.">
   <link rel="icon" type="image/svg+xml"
@@ -1030,17 +1034,17 @@
             <div class="form-grid" style="max-width: 500px;">
               <div class="form-group span-2">
                 <label class="form-label" for="changePwOld"><i class="bi bi-key"></i> Password Lama</label>
-                <input type="password" id="changePwOld" class="form-input" placeholder="Masukkan password lama">
+                <input type="password" id="changePwOld" class="form-input" placeholder="Masukkan password lama" autocomplete="current-password">
               </div>
 
               <div class="form-group span-2">
                 <label class="form-label" for="changePwNew"><i class="bi bi-lock"></i> Password Baru</label>
-                <input type="password" id="changePwNew" class="form-input" placeholder="Minimal 6 karakter">
+                <input type="password" id="changePwNew" class="form-input" placeholder="Minimal 6 karakter" autocomplete="new-password">
               </div>
 
               <div class="form-group span-2">
                 <label class="form-label" for="changePwConfirm"><i class="bi bi-check2-circle"></i> Ulangi Password Baru</label>
-                <input type="password" id="changePwConfirm" class="form-input" placeholder="Ketik ulang password baru">
+                <input type="password" id="changePwConfirm" class="form-input" placeholder="Ketik ulang password baru" autocomplete="new-password">
               </div>
 
               <div class="form-group span-2">
@@ -1131,14 +1135,17 @@
               <i class="bi bi-eye"></i>
             </button>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 6px;">
             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; cursor: pointer;">
               <input type="checkbox" id="rememberGhToken" checked>
               <span>Ingat token di browser ini</span>
             </label>
-            <a href="https://github.com/settings/tokens/new?scopes=repo&description=Nurul+CMS+Publisher" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent-gold); text-decoration: none;">
-              <i class="bi bi-box-arrow-up-right"></i> Buat Token GitHub
-            </a>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button type="button" id="btnClearSavedToken" style="background: none; border: none; font-size: 0.8rem; color: #f87171; cursor: pointer; text-decoration: underline;" title="Hapus token dari penyimpanan browser">Hapus Token</button>
+              <a href="https://github.com/settings/tokens/new?scopes=repo&description=Nurul+CMS+Publisher" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent-gold); text-decoration: none;">
+                <i class="bi bi-box-arrow-up-right"></i> Buat Token GitHub
+              </a>
+            </div>
           </div>
         </div>
 
