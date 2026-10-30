@@ -57,7 +57,33 @@
     return {};
   }
 
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function sanitizeUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    const trimmed = url.trim();
+    // Allow relative paths, landing_page_assets/, http:, https:, mailto:, tel:
+    if (/^(https?:|mailto:|tel:|\/|\.\/|landing_page_assets\/)/i.test(trimmed)) {
+      return encodeURI(trimmed).replace(/["'<>]/g, '');
+    }
+    // Allow valid base64 image data URLs
+    if (/^data:image\/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(trimmed)) {
+      return trimmed;
+    }
+    return '';
+  }
+
   const CMS = {
+    escapeHtml: escapeHtml,
+    sanitizeUrl: sanitizeUrl,
     /**
      * Compress and resize an image file using HTML5 Canvas
      * Keeps images under ~150KB to preserve localStorage quota
@@ -271,53 +297,59 @@
         }
       });
 
-      // 2. Personal Profile Photos
+      // 2. Personal Profile Photos & Links (Sanitized)
       if (data.personal) {
         const p = data.personal;
         const heroImg = document.getElementById('heroImage');
-        if (heroImg && p.heroImage) {
-          heroImg.src = p.heroImage;
+        const safeHero = sanitizeUrl(p.heroImage);
+        if (heroImg && safeHero) {
+          heroImg.src = safeHero;
           const heroSource = heroImg.closest('picture')?.querySelector('source');
-          if (heroSource) heroSource.srcset = p.heroImageWebp || p.heroImage;
+          if (heroSource) heroSource.srcset = sanitizeUrl(p.heroImageWebp) || safeHero;
         }
 
         const aboutImg = document.getElementById('aboutImage') || document.querySelector('.about-photo-card img');
-        if (aboutImg && p.aboutImage) {
-          aboutImg.src = p.aboutImage;
+        const safeAbout = sanitizeUrl(p.aboutImage);
+        if (aboutImg && safeAbout) {
+          aboutImg.src = safeAbout;
           const aboutSource = aboutImg.closest('picture')?.querySelector('source');
-          if (aboutSource) aboutSource.srcset = p.aboutImageWebp || p.aboutImage;
+          if (aboutSource) aboutSource.srcset = sanitizeUrl(p.aboutImageWebp) || safeAbout;
         }
 
         const closingImg = document.getElementById('closingImage') || document.querySelector('.contact-photo-side img');
-        if (closingImg && p.closingImage) {
-          closingImg.src = p.closingImage;
+        const safeClosing = sanitizeUrl(p.closingImage);
+        if (closingImg && safeClosing) {
+          closingImg.src = safeClosing;
           const closingSource = closingImg.closest('picture')?.querySelector('source');
-          if (closingSource) closingSource.srcset = p.closingImageWebp || p.closingImage;
+          if (closingSource) closingSource.srcset = sanitizeUrl(p.closingImageWebp) || safeClosing;
         }
 
-        // WhatsApp links
+        // WhatsApp links (Sanitized)
         if (p.whatsappLink || p.whatsapp) {
-          const waLinks = document.querySelectorAll('a[href*="wa.me"]');
-          waLinks.forEach(a => {
-            const href = p.whatsappLink || `https://wa.me/${p.whatsapp.replace(/[^0-9]/g, '')}`;
-            a.setAttribute('href', href);
-          });
+          const rawWa = p.whatsappLink || `https://wa.me/${p.whatsapp.replace(/[^0-9]/g, '')}`;
+          const safeWa = sanitizeUrl(rawWa);
+          if (safeWa) {
+            const waLinks = document.querySelectorAll('a[href*="wa.me"]');
+            waLinks.forEach(a => a.setAttribute('href', safeWa));
+          }
         }
 
-        // Email links
+        // Email links (Sanitized)
         if (p.email) {
-          const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
-          emailLinks.forEach(a => {
-            a.setAttribute('href', `mailto:${p.email}`);
-          });
+          const safeEmail = sanitizeUrl(`mailto:${p.email.trim()}`);
+          if (safeEmail) {
+            const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
+            emailLinks.forEach(a => a.setAttribute('href', safeEmail));
+          }
         }
 
-        // LinkedIn links
+        // LinkedIn links (Sanitized)
         if (p.linkedin) {
-          const linkedinLinks = document.querySelectorAll('a[href*="linkedin.com"]');
-          linkedinLinks.forEach(a => {
-            a.setAttribute('href', p.linkedin);
-          });
+          const safeLinkedin = sanitizeUrl(p.linkedin);
+          if (safeLinkedin) {
+            const linkedinLinks = document.querySelectorAll('a[href*="linkedin.com"]');
+            linkedinLinks.forEach(a => a.setAttribute('href', safeLinkedin));
+          }
         }
       }
 
@@ -381,18 +413,26 @@
         data.gallery.forEach(item => {
           const isHidden = (activeFilter !== 'all' && item.category !== activeFilter);
           const hideClass = isHidden ? ' hide' : '';
-          const pictureHtml = item.imageWebp
-            ? `<picture><source srcset="${item.imageWebp}" type="image/webp"><img src="${item.image}" alt="${item.title}" loading="lazy"></picture>`
-            : `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+          const safeImage = sanitizeUrl(item.image);
+          const safeWebp = item.imageWebp ? sanitizeUrl(item.imageWebp) : '';
+          const safeTitle = escapeHtml(item.title);
+          const safeDesc = escapeHtml(item.desc || '');
+          const safeCategory = escapeHtml(item.category);
+          const safeCatLabel = escapeHtml(item.categoryLabel || item.category);
+          const safeCatIcon = escapeHtml(item.categoryIcon || 'bi bi-image');
+
+          const pictureHtml = safeWebp
+            ? `<picture><source srcset="${safeWebp}" type="image/webp"><img src="${safeImage}" alt="${safeTitle}" loading="lazy"></picture>`
+            : `<img src="${safeImage}" alt="${safeTitle}" loading="lazy">`;
 
           html += `
-            <div class="gallery-item${hideClass}" data-category="${item.category}">
+            <div class="gallery-item${hideClass}" data-category="${safeCategory}">
               <div class="gallery-card">
                 ${pictureHtml}
                 <div class="gallery-overlay">
-                  <span class="cat-pill"><i class="${item.categoryIcon || 'bi bi-image'}"></i> ${item.categoryLabel || item.category}</span>
-                  <h4>${item.title}</h4>
-                  <p>${item.desc || ''}</p>
+                  <span class="cat-pill"><i class="${safeCatIcon}"></i> ${safeCatLabel}</span>
+                  <h4>${safeTitle}</h4>
+                  <p>${safeDesc}</p>
                 </div>
               </div>
             </div>
@@ -460,7 +500,15 @@
       const toast = document.createElement('div');
       toast.className = `cms-toast cms-toast-${type || 'success'}`;
       const icon = type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill';
-      toast.innerHTML = `<i class="bi ${icon}"></i><span>${message}</span>`;
+      
+      const iconEl = document.createElement('i');
+      iconEl.className = `bi ${icon}`;
+      
+      const spanEl = document.createElement('span');
+      spanEl.textContent = message; // Safe textContent to prevent DOM XSS
+
+      toast.appendChild(iconEl);
+      toast.appendChild(spanEl);
       toastContainer.appendChild(toast);
 
       setTimeout(() => {

@@ -157,21 +157,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     gallery.forEach(item => {
       const meta = categoryMeta[item.category] || { label: item.category, icon: 'bi bi-image' };
+      const safeTitle = CMSManager.escapeHtml(item.title);
+      const safeDesc = CMSManager.escapeHtml(item.desc || 'Tanpa keterangan');
+      const safeImage = CMSManager.sanitizeUrl(item.image);
+      const safeId = CMSManager.escapeHtml(item.id);
+      const safeIcon = CMSManager.escapeHtml(meta.icon);
+      const safeLabel = CMSManager.escapeHtml(meta.label);
+
       html += `
-        <div class="gallery-admin-card" data-id="${item.id}">
+        <div class="gallery-admin-card" data-id="${safeId}">
           <div class="gallery-admin-thumb">
-            <img src="${item.image}" alt="${item.title}" loading="lazy">
+            <img src="${safeImage}" alt="${safeTitle}" loading="lazy">
             <span class="gallery-admin-cat">
-              <i class="${meta.icon}"></i>
-              <span>${meta.label}</span>
+              <i class="${safeIcon}"></i>
+              <span>${safeLabel}</span>
             </span>
           </div>
           <div class="gallery-admin-info">
-            <h4 class="gallery-admin-title">${item.title}</h4>
-            <p class="gallery-admin-desc">${item.desc || 'Tanpa keterangan'}</p>
+            <h4 class="gallery-admin-title">${safeTitle}</h4>
+            <p class="gallery-admin-desc">${safeDesc}</p>
           </div>
           <div class="gallery-admin-footer">
-            <button type="button" class="btn btn-danger-soft btn-delete-photo" data-id="${item.id}" title="Hapus foto dari galeri">
+            <button type="button" class="btn btn-danger-soft btn-delete-photo" data-id="${safeId}" title="Hapus foto dari galeri">
               <i class="bi bi-trash3-fill"></i>
               <span>Hapus</span>
             </button>
