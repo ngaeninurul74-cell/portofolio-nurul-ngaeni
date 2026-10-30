@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Pengelola Konten - Portofolio Nurul Ngaeni</title>
+  <meta name="description" content="Panel pengelola dan pengeditan konten portofolio Nurul Ngaeni secara langsung dan real-time.">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23f59e0b'>N</text></svg>">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Bootstrap Icons CDN (Zero Emojis Allowed) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="cms.css">
+</head>
+
+<body>
+  <!-- Admin Navbar -->
+  <header class="admin-navbar">
+    <div class="admin-nav-container">
+      <div class="admin-brand">
+        <div class="brand-icon-box">
+          <i class="bi bi-sliders"></i>
+        </div>
+        <div class="brand-titles">
+          <h1>CMS Konten Portofolio</h1>
+          <p>Nurul Ngaeni &mdash; Panel Editor Konten Real-Time</p>
+        </div>
+      </div>
+
+      <div class="admin-header-actions">
+        <a href="index.html" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-box-arrow-up-right"></i>
+          <span>Lihat Landing Page</span>
+        </a>
+        <button id="btnSaveAll" class="btn btn-primary">
+          <i class="bi bi-floppy-fill"></i>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Main Layout -->
+  <div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-heading">Menu Bagian Web</div>
+      <ul class="nav-tabs-list">
+        <li>
+          <button class="tab-btn active" data-tab="tab-hero">
+            <i class="bi bi-person-vcard"></i>
+            <span>Profil & Hero</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-about">
+            <i class="bi bi-file-earmark-person"></i>
+            <span>Tentang Saya</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-stats">
+            <i class="bi bi-speedometer2"></i>
+            <span>Statistik & Angka</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-quote">
+            <i class="bi bi-chat-quote"></i>
+            <span>Filosofi & Quote</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-services">
+            <i class="bi bi-mic"></i>
+            <span>Layanan & Keahlian</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-projects">
+            <i class="bi bi-briefcase"></i>
+            <span>Proyek & Bisnis</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" data-tab="tab-contact">
+            <i class="bi bi-envelope-paper"></i>
+            <span>Kontak & Booking</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-status-box">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Sinkronisasi Otomatis</span>
+        </div>
+        <p class="status-note">
+          Setiap perubahan yang Anda simpan akan langsung aktif di landing page tanpa perlu konfigurasi tambahan.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="admin-main">
+
+      <!-- TAB 1: Profil & Hero -->
+      <section id="tab-hero" class="tab-panel active">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-person-badge"></i> Profil & Bagian Hero Utama</h2>
+              <p class="card-subtitle">Pengaturan identitas personal, headline selamat datang, serta kontak utama.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="personal_name"><i class="bi bi-person-fill"></i> Nama Lengkap</label>
+              <input type="text" id="personal_name" class="form-input" placeholder="Nurul Ngaeni">
+              <span class="form-help">Nama yang tampil pada tajuk dan logo.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="personal_badge"><i class="bi bi-patch-check-fill"></i> Badge / Gelar Profesi</label>
+              <input type="text" id="personal_badge" class="form-input" placeholder="Professional MC & Speaker">
+              <span class="form-help">Pill badge di atas headline hero.</span>
+            </div>
+
+            <div class="form-group span-2">
+              <label class="form-label" for="personal_headline"><i class="bi bi-type-h1"></i> Headline Utama Hero</label>
+              <input type="text" id="personal_headline" class="form-input" placeholder="Dynamic Communicator, Event Host & Marketing Strategist">
+              <span class="form-help">Judul tebal utama yang pertama kali dilihat pengunjung.</span>
+            </div>
+
+            <div class="form-group span-2">
+              <label class="form-label" for="personal_subheadline"><i class="bi bi-text-paragraph"></i> Subheadline / Ringkasan Diri</label>
+              <textarea id="personal_subheadline" class="form-textarea" rows="3" placeholder="Deskripsi ringkas profil Anda"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="personal_location"><i class="bi bi-geo-alt-fill"></i> Lokasi Domisili</label>
+              <input type="text" id="personal_location" class="form-input" placeholder="Klaten & Yogyakarta">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="personal_campus"><i class="bi bi-mortarboard-fill"></i> Institusi / Kampus</label>
+              <input type="text" id="personal_campus" class="form-input" placeholder="Universitas Negeri Yogyakarta">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="personal_whatsapp"><i class="bi bi-whatsapp"></i> Nomor WhatsApp</label>
+              <input type="text" id="personal_whatsapp" class="form-input" placeholder="+62 8571 2314 820">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="personal_email"><i class="bi bi-envelope-fill"></i> Alamat Email</label>
+              <input type="email" id="personal_email" class="form-input" placeholder="nurulngaeni.2024@student.uny.ac.id">
+            </div>
+
+            <div class="form-group span-2">
+              <label class="form-label" for="personal_linkedin"><i class="bi bi-linkedin"></i> Tautan Profil LinkedIn</label>
+              <input type="url" id="personal_linkedin" class="form-input" placeholder="https://id.linkedin.com/in/nurul-ngaeni-608187320">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: Tentang Saya -->
+      <section id="tab-about" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-file-earmark-person"></i> Bagian Tentang Saya</h2>
+              <p class="card-subtitle">Narasi latar belakang dan dua pilar kekuatan personal.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="about_tag"><i class="bi bi-tag-fill"></i> Tag Kategori</label>
+              <input type="text" id="about_tag" class="form-input" placeholder="TENTANG SAYA">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="about_headline"><i class="bi bi-card-heading"></i> Headline Tagline</label>
+              <input type="text" id="about_headline" class="form-input" placeholder="Make Something Different.">
+            </div>
+
+            <div class="form-group span-2">
+              <label class="form-label" for="about_text"><i class="bi bi-body-text"></i> Narasi Lengkap Tentang Saya</label>
+              <textarea id="about_text" class="form-textarea" rows="4"></textarea>
+            </div>
+
+            <div class="sub-card span-2">
+              <div class="sub-card-header">
+                <span class="sub-card-title"><i class="bi bi-chat-heart-fill"></i> Pilar 1: Komunikasi Interaktif</span>
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="about_card1Title">Judul Pilar 1</label>
+                  <input type="text" id="about_card1Title" class="form-input" placeholder="Komunikasi Interaktif">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="about_card1Desc">Deskripsi Pilar 1</label>
+                  <input type="text" id="about_card1Desc" class="form-input" placeholder="Menghidupkan suasana acara...">
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-card span-2">
+              <div class="sub-card-header">
+                <span class="sub-card-title"><i class="bi bi-diagram-3-fill"></i> Pilar 2: Manajemen Acara Strategis</span>
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="about_card2Title">Judul Pilar 2</label>
+                  <input type="text" id="about_card2Title" class="form-input" placeholder="Manajemen Acara Strategis">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="about_card2Desc">Deskripsi Pilar 2</label>
+                  <input type="text" id="about_card2Desc" class="form-input" placeholder="Memahami alur teknis panggung...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: Statistik Counter -->
+      <section id="tab-stats" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-speedometer2"></i> Statistik & Counter Pencapaian</h2>
+              <p class="card-subtitle">Empat kotak angka pencapaian yang tampil dengan animasi counter pada landing page.</p>
+            </div>
+          </div>
+
+          <!-- Stat 0: MC -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-mic-fill"></i> Statistik 1: Acara MC & Host</span>
+            </div>
+            <div class="form-grid grid-3">
+              <div class="form-group">
+                <label class="form-label" for="stat_0_value">Nilai Angka</label>
+                <input type="text" id="stat_0_value" class="form-input" placeholder="40+">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_0_label">Label Judul</label>
+                <input type="text" id="stat_0_label" class="form-input" placeholder="Acara MC & Host">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_0_desc">Keterangan Sub</label>
+                <input type="text" id="stat_0_desc" class="form-input" placeholder="Expo UMKM, Karnaval, Festival & Formal">
+              </div>
+            </div>
+          </div>
+
+          <!-- Stat 1: Pemateri -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-megaphone-fill"></i> Statistik 2: Sesi Pemateri</span>
+            </div>
+            <div class="form-grid grid-3">
+              <div class="form-group">
+                <label class="form-label" for="stat_1_value">Nilai Angka</label>
+                <input type="text" id="stat_1_value" class="form-input" placeholder="25+">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_1_label">Label Judul</label>
+                <input type="text" id="stat_1_label" class="form-input" placeholder="Sesi Pemateri">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_1_desc">Keterangan Sub</label>
+                <input type="text" id="stat_1_desc" class="form-input" placeholder="Marketing, Broadcasting & Kepemimpinan">
+              </div>
+            </div>
+          </div>
+
+          <!-- Stat 2: Organisasi -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-people-fill"></i> Statistik 3: Organisasi</span>
+            </div>
+            <div class="form-grid grid-3">
+              <div class="form-group">
+                <label class="form-label" for="stat_2_value">Nilai Angka</label>
+                <input type="text" id="stat_2_value" class="form-input" placeholder="15+">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_2_label">Label Judul</label>
+                <input type="text" id="stat_2_label" class="form-input" placeholder="Organisasi">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_2_desc">Keterangan Sub</label>
+                <input type="text" id="stat_2_desc" class="form-input" placeholder="Kepemudaan, Duta Humas & Kemahasiswaan">
+              </div>
+            </div>
+          </div>
+
+          <!-- Stat 3: Prestasi -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-trophy-fill"></i> Statistik 4: Prestasi & Penghargaan</span>
+            </div>
+            <div class="form-grid grid-3">
+              <div class="form-group">
+                <label class="form-label" for="stat_3_value">Nilai Angka</label>
+                <input type="text" id="stat_3_value" class="form-input" placeholder="8+">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_3_label">Label Judul</label>
+                <input type="text" id="stat_3_label" class="form-input" placeholder="Prestasi & Penghargaan">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="stat_3_desc">Keterangan Sub</label>
+                <input type="text" id="stat_3_desc" class="form-input" placeholder="Lulusan Terbaik & Juara 1 LKS Marketing">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Filosofi & Quote -->
+      <section id="tab-quote" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-chat-quote"></i> Banner Filosofi & Kutipan</h2>
+              <p class="card-subtitle">Kutipan besar pemikiran yang tampil di tengah halaman landing page.</p>
+            </div>
+          </div>
+
+          <div class="form-grid grid-1">
+            <div class="form-group">
+              <label class="form-label" for="quote_headline"><i class="bi bi-quote"></i> Teks Kutipan Utama (Huruf Kapital)</label>
+              <textarea id="quote_headline" class="form-textarea" rows="2" placeholder="KOMUNIKASI BERMAKNA MENCIPTAKAN DAMPAK NYATA"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="quote_subtext"><i class="bi bi-card-text"></i> Elaborasi Kutipan</label>
+              <textarea id="quote_subtext" class="form-textarea" rows="3" placeholder="Menghubungkan gagasan, menggerakkan audiens..."></textarea>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="quote_author"><i class="bi bi-person-fill"></i> Penulis Kutipan</label>
+                <input type="text" id="quote_author" class="form-input" placeholder="Nurul Ngaeni">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="quote_role"><i class="bi bi-award-fill"></i> Keterangan Peran Penulis</label>
+                <input type="text" id="quote_role" class="form-input" placeholder="Public Speaker & Marketing Student">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: Layanan & Keahlian -->
+      <section id="tab-services" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-grid-fill"></i> Layanan & Kompetensi Utama</h2>
+              <p class="card-subtitle">Empat layanan yang ditawarkan untuk kebutuhan acara dan edukasi.</p>
+            </div>
+          </div>
+
+          <!-- Service 0: MC -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-mic"></i> Layanan 1: Master of Ceremony (MC)</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="service_0_title">Judul Layanan</label>
+                <input type="text" id="service_0_title" class="form-input" placeholder="Master of Ceremony (MC)">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="service_0_badge">Badge Jam Terbang</label>
+                <input type="text" id="service_0_badge" class="form-input" placeholder="40+ Event">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="service_0_desc">Deskripsi Layanan</label>
+                <textarea id="service_0_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service 1: Moderator -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-chat-square-quote"></i> Layanan 2: Moderator Diskusi & Talkshow</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="service_1_title">Judul Layanan</label>
+                <input type="text" id="service_1_title" class="form-input" placeholder="Moderator Diskusi & Talkshow">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="service_1_badge">Badge Jam Terbang</label>
+                <input type="text" id="service_1_badge" class="form-input" placeholder="15+ Sesi">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="service_1_desc">Deskripsi Layanan</label>
+                <textarea id="service_1_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service 2: Speaker -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-mortarboard"></i> Layanan 3: Pemateri & Guru Tamu</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="service_2_title">Judul Layanan</label>
+                <input type="text" id="service_2_title" class="form-input" placeholder="Pemateri & Guru Tamu">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="service_2_badge">Badge Jam Terbang</label>
+                <input type="text" id="service_2_badge" class="form-input" placeholder="25+ Pertemuan">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="service_2_desc">Deskripsi Layanan</label>
+                <textarea id="service_2_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service 3: Modeling -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-camera"></i> Layanan 4: Muse & Fashion Model</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="service_3_title">Judul Layanan</label>
+                <input type="text" id="service_3_title" class="form-input" placeholder="Muse & Fashion Model">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="service_3_badge">Badge Jam Terbang</label>
+                <input type="text" id="service_3_badge" class="form-input" placeholder="7+ Runway">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="service_3_desc">Deskripsi Layanan</label>
+                <textarea id="service_3_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: Proyek & Bisnis -->
+      <section id="tab-projects" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-briefcase-fill"></i> Proyek Unggulan & Inisiatif Bisnis</h2>
+              <p class="card-subtitle">Tiga inisiatif strategis di bidang kemahasiswaan, promosi pariwisata, dan wirausaha.</p>
+            </div>
+          </div>
+
+          <!-- Project 0: IKANURA -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-water"></i> Proyek 1: SEGARA untuk IKANURA</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="project_0_title">Judul Proyek</label>
+                <input type="text" id="project_0_title" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_0_category">Kategori Proyek</label>
+                <input type="text" id="project_0_category" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_0_subtitle">Kepanjangan / Subtitle</label>
+                <input type="text" id="project_0_subtitle" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_0_role">Peran & Posisi</label>
+                <input type="text" id="project_0_role" class="form-input">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="project_0_desc">Deskripsi Proyek</label>
+                <textarea id="project_0_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 1: APIK -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-geo-alt"></i> Proyek 2: Ayo Piknik Klaten (APIK)</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="project_1_title">Judul Proyek</label>
+                <input type="text" id="project_1_title" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_1_category">Kategori Proyek</label>
+                <input type="text" id="project_1_category" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_1_subtitle">Subtitle Platform</label>
+                <input type="text" id="project_1_subtitle" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_1_role">Peran & Posisi</label>
+                <input type="text" id="project_1_role" class="form-input">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="project_1_desc">Deskripsi Proyek</label>
+                <textarea id="project_1_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 2: Wirausaha Mandiri -->
+          <div class="sub-card">
+            <div class="sub-card-header">
+              <span class="sub-card-title"><i class="bi bi-bag-check"></i> Proyek 3: Wirausaha Mandiri</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="project_2_title">Judul Usaha</label>
+                <input type="text" id="project_2_title" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_2_category">Kategori Usaha</label>
+                <input type="text" id="project_2_category" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_2_subtitle">Nama Brand</label>
+                <input type="text" id="project_2_subtitle" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="project_2_role">Peran & Posisi</label>
+                <input type="text" id="project_2_role" class="form-input">
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label" for="project_2_desc">Deskripsi Usaha</label>
+                <textarea id="project_2_desc" class="form-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: Kontak & Booking -->
+      <section id="tab-contact" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title"><i class="bi bi-envelope-paper-fill"></i> Bagian Kontak & Booking</h2>
+              <p class="card-subtitle">Pengaturan ajakan kolaborasi pada bagian kartu penutup landing page.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="contact_tag"><i class="bi bi-tag-fill"></i> Tag Section</label>
+              <input type="text" id="contact_tag" class="form-input" placeholder="KOLABORASI & BOOKING">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact_title"><i class="bi bi-megaphone-fill"></i> Judul Ajakan</label>
+              <input type="text" id="contact_title" class="form-input" placeholder="Let's Connect & Create Impact">
+            </div>
+
+            <div class="form-group span-2">
+              <label class="form-label" for="contact_subtitle"><i class="bi bi-text-paragraph"></i> Deskripsi Ajakan Kolaborasi</label>
+              <textarea id="contact_subtitle" class="form-textarea" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Sticky Bottom Bar -->
+  <div class="admin-bottom-bar">
+    <div class="admin-bottom-container">
+      <div class="bottom-info">
+        <i class="bi bi-shield-check" style="color: var(--accent-gold); font-size: 1.15rem;"></i>
+        <span>Pengaturan tersimpan langsung ke browser lokal dan tersinkronisasi otomatis.</span>
+      </div>
+
+      <div class="bottom-actions">
+        <button id="btnResetDefault" class="btn btn-danger-soft" title="Kembalikan semua teks ke versi bawaan">
+          <i class="bi bi-arrow-counterclockwise"></i>
+          <span>Reset Default</span>
+        </button>
+        <button id="btnExportJSON" class="btn btn-outline" title="Unduh backup data format JSON">
+          <i class="bi bi-download"></i>
+          <span>Unduh JSON</span>
+        </button>
+        <label for="importJsonInput" class="btn btn-outline" style="margin: 0; cursor: pointer;" title="Unggah file JSON cadangan">
+          <i class="bi bi-upload"></i>
+          <span>Impor JSON</span>
+        </label>
+        <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+        <button id="btnBottomSave" class="btn btn-primary">
+          <i class="bi bi-floppy-fill"></i>
+          <span>Simpan Perubahan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="landing_page_assets/portfolio-content.js"></script>
+  <script src="cms-manager.js"></script>
+  <script src="admin.js"></script>
+</body>
+
+</html>

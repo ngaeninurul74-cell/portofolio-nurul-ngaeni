@@ -1,10 +1,11 @@
 {
   "personal": {
     "name": "Nurul Ngaeni",
-    "badge": "Management Student | Speaker | Event Host",
-    "headline": "Dynamic Communicator, Professional MC & Marketing Strategist",
-    "subheadline": "Mahasiswa S1 Manajemen Universitas Negeri Yogyakarta dengan keahlian dalam Public Speaking, Event Management, Digital Marketing, dan Komunikasi Strategis.",
-    "location": "Klaten, Jawa Tengah & Yogyakarta",
+    "badge": "Professional MC & Speaker",
+    "headline": "Dynamic Communicator, Event Host & Marketing Strategist",
+    "subheadline": "Mahasiswa S1 Manajemen Universitas Negeri Yogyakarta yang adaptif dan komunikatif, mengombinasikan keahlian public speaking, pengelolaan acara profesional, serta strategi pemasaran digital untuk menciptakan interaksi yang berdampak.",
+    "location": "Klaten & Yogyakarta",
+    "campus": "Universitas Negeri Yogyakarta",
     "email": "nurulngaeni.2024@student.uny.ac.id",
     "whatsapp": "+62 8571 2314 820",
     "whatsappLink": "https://wa.me/6285712314820",
@@ -20,63 +21,70 @@
     {
       "value": "40+",
       "label": "Acara MC & Host",
-      "desc": "Expo UMKM, Karnaval Budaya, Acara Kampus & Formal",
+      "desc": "Expo UMKM, Karnaval, Festival & Formal",
       "icon": "bi bi-mic-fill"
     },
     {
       "value": "25+",
-      "label": "Sesi Pemateri & Guru Tamu",
-      "desc": "Edukasi Pemasaran, Broadcasting, LDKS & Kepemimpinan",
+      "label": "Sesi Pemateri",
+      "desc": "Marketing, Broadcasting & Kepemimpinan",
       "icon": "bi bi-megaphone-fill"
     },
     {
       "value": "15+",
-      "label": "Organisasi & Komunitas",
-      "desc": "Kiprah aktif di kepemudaan, pariwisata, dan kemahasiswaan",
+      "label": "Organisasi",
+      "desc": "Kepemudaan, Duta Humas & Kemahasiswaan",
       "icon": "bi bi-people-fill"
     },
     {
       "value": "8+",
-      "label": "Penghargaan & Prestasi",
-      "desc": "Lulusan Terbaik, Juara 1 LKS Marketing, Mbak Klaten",
+      "label": "Prestasi & Penghargaan",
+      "desc": "Lulusan Terbaik & Juara 1 LKS Marketing",
       "icon": "bi bi-trophy-fill"
     }
   ],
-  "partners": [
-    "Universitas Negeri Yogyakarta",
-    "Pemerintah Kabupaten Klaten",
-    "PPK Ormawa Kemdikbudristek",
-    "TiketHub Indonesia",
-    "Klaten Fashion Festival",
-    "SMKN 1 Klaten"
-  ],
+  "about": {
+    "tag": "TENTANG SAYA",
+    "headline": "Make Something Different.",
+    "text": "Saya berdedikasi dalam bidang komunikasi publik, manajemen acara, dan pemasaran digital. Berbekal pengalaman intensif memandu lebih dari 40 acara dan berbagi ilmu sebagai guru tamu serta narasumber di berbagai institusi, saya meyakini bahwa komunikasi yang efektif adalah kunci membangun koneksi yang kuat antara ide, panggung, dan audiens.",
+    "card1Title": "Komunikasi Interaktif",
+    "card1Desc": "Menghidupkan suasana acara dengan pembawaan hangat, runtut, dan persuasif.",
+    "card2Title": "Manajemen Acara Strategis",
+    "card2Desc": "Memahami alur teknis panggung, koordinasi panitia, dan mitigasi situasi lapangan."
+  },
+  "quote": {
+    "headline": "KOMUNIKASI BERMAKNA MENCIPTAKAN DAMPAK NYATA",
+    "subtext": "Menghubungkan gagasan, menggerakkan audiens, dan menginspirasi perubahan positif melalui integritas, kolaborasi, dan dedikasi berkelanjutan.",
+    "author": "Nurul Ngaeni",
+    "role": "Public Speaker & Marketing Student"
+  },
   "services": [
     {
       "id": "mc",
       "title": "Master of Ceremony (MC)",
-      "desc": "Memandu acara formal kenegaraan, seminar akademik, karnaval budaya, festival kreatif hingga expo kewirausahaan dengan artikulasi prima dan energi dinamis.",
-      "count": "40+ Acara",
+      "badge": "40+ Event",
+      "desc": "Memandu jalannya acara formal kenegaraan, seminar akademik, pameran UMKM, hingga karnaval budaya dengan artikulasi prima, intonasi memikat, dan penguasaan panggung yang sigap.",
       "icon": "bi bi-mic"
     },
     {
       "id": "moderator",
-      "title": "Moderator Acara & Talkshow",
-      "desc": "Mengalirkan diskusi interaktif bersama kepala daerah, tokoh industri, akademisi, dan praktisi bisnis dengan penguasaan topik yang tajam.",
-      "count": "15+ Talkshow",
+      "title": "Moderator Diskusi & Talkshow",
+      "badge": "15+ Sesi",
+      "desc": "Mengalirkan percakapan interaktif bersama pemangku kebijakan, akademisi, dan praktisi industri melalui elaborasi pertanyaan berbobot dan penjagaan ritme diskusi yang dinamis.",
       "icon": "bi bi-chat-square-quote"
     },
     {
       "id": "speaker",
-      "title": "Narasumber & Guru Tamu",
-      "desc": "Berbagi wawasan seputar strategi pemasaran digital, komunikasi publik, personal branding, broadcasting, dan kepemimpinan organisasi.",
-      "count": "25+ Sesi",
+      "title": "Pemateri & Guru Tamu",
+      "badge": "25+ Pertemuan",
+      "desc": "Membawakan materi pelatihan komunikasi publik, personal branding, teknik presentasi, strategi pemasaran digital, hingga kepemimpinan generasi muda.",
       "icon": "bi bi-mortarboard"
     },
     {
       "id": "modeling",
       "title": "Muse & Fashion Model",
-      "desc": "Representasi busana daerah dan karya desainer pada ajang Klaten Fashion Festival, Lurik Karnival, hingga promosi wisata budaya.",
-      "count": "7+ Runway & Kampanye",
+      "badge": "7+ Runway",
+      "desc": "Representasi busana daerah, kain tradisional lurik, dan karya perancang busana pada panggung karnaval budaya serta kampanye promosi pariwisata daerah.",
       "icon": "bi bi-camera"
     }
   ],
@@ -107,10 +115,6 @@
       "icon": "bi bi-bullseye"
     }
   ],
-  "quote": {
-    "text": "KOMUNIKASI BERMAKNA MENCIPTAKAN DAMPAK NYATA",
-    "subtext": "Menghubungkan gagasan, menggerakkan audiens, dan menginspirasi perubahan positif melalui integritas, kolaborasi, dan pembelajaran berkelanjutan."
-  },
   "projects": [
     {
       "title": "SEGARA untuk IKANURA",
@@ -194,5 +198,10 @@
       "image": "landing_page_assets/achievements/award-abdidaya-ppko.png",
       "icon": "bi bi-diagram-3"
     }
-  ]
+  ],
+  "contact": {
+    "tag": "KOLABORASI & BOOKING",
+    "title": "Let's Connect & Create Impact",
+    "subtitle": "Terbuka terhadap kolaborasi acara sebagai Master of Ceremony (MC), Moderator seminar, pemateri sharing session, program kepemudaan, serta proyek manajemen pemasaran."
+  }
 }

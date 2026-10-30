@@ -159,4 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('scroll', animateCounters);
   animateCounters(); // run once on load
+
+  // CMS Manager Initialization (Hydration, Multi-tab Live Sync & Inline Editor)
+  if (typeof CMSManager !== 'undefined') {
+    CMSManager.hydrateLandingPage();
+    CMSManager.initSyncListener();
+    CMSManager.initInlineEditor();
+  }
 });

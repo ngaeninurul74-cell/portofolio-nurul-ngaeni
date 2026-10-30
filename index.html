@@ -22,6 +22,7 @@
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="cms.css">
 </head>
 
 <body>
@@ -43,6 +44,7 @@
           <li class="nav-item"><a href="#projects" class="nav-link">Proyek</a></li>
           <li class="nav-item"><a href="#achievements" class="nav-link">Prestasi</a></li>
           <li class="nav-item"><a href="#contact" class="nav-link">Kontak</a></li>
+          <li class="nav-item"><a href="admin.html" class="nav-link" target="_blank" title="Panel CMS untuk edit teks web"><i class="bi bi-pencil-square"></i> Kelola Web</a></li>
         </ul>
       </nav>
 
@@ -65,14 +67,14 @@
       <div class="hero-content">
         <div class="badge-pill">
           <i class="bi bi-patch-check-fill"></i>
-          <span>Professional MC & Speaker</span>
+          <span data-cms-key="personal.badge">Professional MC & Speaker</span>
         </div>
 
-        <h1 class="hero-title">
+        <h1 class="hero-title" data-cms-key="personal.headline">
           Dynamic <span class="highlight-text">Communicator</span>, Event Host & Marketing Strategist
         </h1>
 
-        <p class="hero-description">
+        <p class="hero-description" data-cms-key="personal.subheadline">
           Mahasiswa S1 Manajemen Universitas Negeri Yogyakarta yang adaptif dan komunikatif, mengombinasikan keahlian
           public speaking, pengelolaan acara profesional, serta strategi pemasaran digital untuk menciptakan interaksi
           yang berdampak.
@@ -92,11 +94,11 @@
         <div class="hero-meta-row">
           <div class="meta-item">
             <i class="bi bi-geo-alt-fill"></i>
-            <span>Klaten & Yogyakarta</span>
+            <span data-cms-key="personal.location">Klaten & Yogyakarta</span>
           </div>
           <div class="meta-item">
             <i class="bi bi-mortarboard-fill"></i>
-            <span>Universitas Negeri Yogyakarta</span>
+            <span data-cms-key="personal.campus">Universitas Negeri Yogyakarta</span>
           </div>
         </div>
       </div>
@@ -141,11 +143,11 @@
     <div class="container">
       <div class="about-grid">
         <div class="about-info">
-          <span class="section-tag">TENTANG SAYA</span>
-          <h2 class="section-title">
+          <span class="section-tag" data-cms-key="about.tag">TENTANG SAYA</span>
+          <h2 class="section-title" data-cms-key="about.headline">
             Make Something <span class="highlight-line">Different.</span>
           </h2>
-          <p class="about-text">
+          <p class="about-text" data-cms-key="about.text">
             Saya berdedikasi dalam bidang komunikasi publik, manajemen acara, dan pemasaran digital. Berbekal pengalaman
             intensif memandu lebih dari 40 acara dan berbagi ilmu sebagai guru tamu serta narasumber di berbagai
             institusi, saya meyakini bahwa komunikasi yang efektif adalah kunci membangun koneksi yang kuat antara ide,
@@ -156,15 +158,15 @@
             <div class="about-card-item">
               <div class="card-icon"><i class="bi bi-chat-heart"></i></div>
               <div class="card-text">
-                <h4>Komunikasi Interaktif</h4>
-                <p>Menghidupkan suasana acara dengan pembawaan hangat, runtut, dan persuasif.</p>
+                <h4 data-cms-key="about.card1Title">Komunikasi Interaktif</h4>
+                <p data-cms-key="about.card1Desc">Menghidupkan suasana acara dengan pembawaan hangat, runtut, dan persuasif.</p>
               </div>
             </div>
             <div class="about-card-item">
               <div class="card-icon"><i class="bi bi-diagram-3"></i></div>
               <div class="card-text">
-                <h4>Manajemen Acara Strategis</h4>
-                <p>Memahami alur teknis panggung, koordinasi panitia, dan mitigasi situasi lapangan.</p>
+                <h4 data-cms-key="about.card2Title">Manajemen Acara Strategis</h4>
+                <p data-cms-key="about.card2Desc">Memahami alur teknis panggung, koordinasi panitia, dan mitigasi situasi lapangan.</p>
               </div>
             </div>
           </div>
@@ -230,16 +232,16 @@
     <div class="quote-backdrop"></div>
     <div class="container quote-container">
       <div class="quote-mark"><i class="bi bi-quote"></i></div>
-      <h2 class="quote-headline">
+      <h2 class="quote-headline" data-cms-key="quote.headline">
         KOMUNIKASI BERMAKNA MENCIPTAKAN DAMPAK NYATA
       </h2>
-      <p class="quote-subtext">
+      <p class="quote-subtext" data-cms-key="quote.subtext">
         Menghubungkan gagasan, menggerakkan audiens, dan menginspirasi perubahan positif melalui integritas, kolaborasi,
         dan dedikasi berkelanjutan.
       </p>
       <div class="quote-author">
-        <span class="author-name">Nurul Ngaeni</span>
-        <span class="author-role">Public Speaker & Marketing Student</span>
+        <span class="author-name" data-cms-key="quote.author">Nurul Ngaeni</span>
+        <span class="author-role" data-cms-key="quote.role">Public Speaker & Marketing Student</span>
       </div>
     </div>
   </section>
@@ -739,9 +741,9 @@
     <div class="container">
       <div class="contact-card">
         <div class="contact-content">
-          <span class="section-tag light">KOLABORASI & BOOKING</span>
-          <h2 class="contact-title">Let's Connect & Create Impact</h2>
-          <p class="contact-subtitle">
+          <span class="section-tag light" data-cms-key="contact.tag">KOLABORASI & BOOKING</span>
+          <h2 class="contact-title" data-cms-key="contact.title">Let's Connect & Create Impact</h2>
+          <p class="contact-subtitle" data-cms-key="contact.subtitle">
             Terbuka terhadap kolaborasi acara sebagai Master of Ceremony (MC), Moderator seminar, pemateri sharing
             session, program kepemudaan, serta proyek manajemen pemasaran.
           </p>
@@ -751,7 +753,7 @@
               <div class="icon-circle"><i class="bi bi-whatsapp"></i></div>
               <div>
                 <span class="item-label">WhatsApp Direct</span>
-                <strong>+62 8571 2314 820</strong>
+                <strong data-cms-key="personal.whatsapp">+62 8571 2314 820</strong>
               </div>
             </a>
 
@@ -759,7 +761,7 @@
               <div class="icon-circle"><i class="bi bi-envelope-at"></i></div>
               <div>
                 <span class="item-label">Email Akademik / Bisnis</span>
-                <strong>nurulngaeni.2024@student.uny.ac.id</strong>
+                <strong data-cms-key="personal.email">nurulngaeni.2024@student.uny.ac.id</strong>
               </div>
             </a>
 
@@ -817,7 +819,9 @@
     </div>
   </div>
 
-  <!-- Custom Script -->
+  <!-- Scripts -->
+  <script src="landing_page_assets/portfolio-content.js"></script>
+  <script src="cms-manager.js"></script>
   <script src="script.js"></script>
 </body>
 

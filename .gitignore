@@ -6,5 +6,7 @@ Thumbs.db
 *.tmp
 *.log
 
-# Optional: jika file PDF asli (37 MB) tidak ingin di-push ke GitHub, buka komentar baris di bawah:
-# PORTOFOLIO NURUL NGAENI.pdf
+# Heavy archives & raw PDF (kept on local drive only, not pushed to GitHub)
+PORTOFOLIO NURUL NGAENI.pdf
+foto_portofolio/
+halaman_portofolio/
