@@ -1,0 +1,65 @@
+# ==============================================================================
+# Security Hardening & PHP Webshell (php2shell) Prevention
+# Nurul Ngaeni Portfolio - Static Web Application
+# ==============================================================================
+
+# 1. Disable PHP Execution Completely
+# Prevents any PHP engine from executing scripts (mitigates php2shell / RCE)
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+
+# 2. Block Direct Access & Execution of All Executable & Script Extensions
+<FilesMatch "(?i)\.(php[0-9]*|phtml|phar|phps|pht|inc|hphp|cgi|pl|py|sh|bash|exe|asp|aspx|jsp|jspx|env|sql|bak|config)$">
+  Order Deny,Allow
+  Deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# 3. Prevent CGI Execution & Directory Indexing
+Options -Indexes -ExecCGI
+
+# 4. Remove Script Handlers for Uploaded/Static Files
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar .inc .cgi .pl
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .phar .inc .cgi .pl
+
+# 5. Block Access to Hidden & Sensitive Files (.git, .env, .htaccess, etc.)
+<FilesMatch "^\.">
+  Order Deny,Allow
+  Deny from all
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# 6. Comprehensive Security Headers
+<IfModule mod_headers.c>
+  # Anti-MIME-Sniffing (prevents browser interpreting images as HTML/scripts)
+  Header set X-Content-Type-Options "nosniff"
+
+  # Anti-Clickjacking
+  Header set X-Frame-Options "DENY"
+
+  # XSS Protection
+  Header set X-XSS-Protection "1; mode=block"
+
+  # Referrer Policy
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Permissions Policy
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # Content-Security-Policy
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com;"
+</IfModule>

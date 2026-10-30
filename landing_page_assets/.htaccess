@@ -1,0 +1,25 @@
+# ==============================================================================
+# Assets Security: Static Files Only - Strictly No Scripts or PHP Execution
+# ==============================================================================
+
+# Disable PHP engine
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+
+# Forbid all executable / script files
+<FilesMatch "(?i)\.(php[0-9]*|phtml|phar|phps|pht|inc|cgi|pl|py|sh|asp|aspx)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  Order Deny,Allow
+  Deny from all
+</FilesMatch>
+
+Options -Indexes -ExecCGI

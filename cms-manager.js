@@ -108,12 +108,29 @@
   function sanitizeUrl(url) {
     if (!url || typeof url !== 'string') return '';
     const trimmed = url.trim();
+
+    // Anti-php2shell / RCE defense: Block URLs targeting PHP or server executable scripts
+    const dangerousScriptExts = /\.(php[0-9]*|phtml|phar|phps|pht|inc|hphp|cgi|pl|py|sh|bash|exe|asp|aspx|jsp|jspx)(\?|#|$)/i;
+    if (dangerousScriptExts.test(trimmed)) {
+      return '';
+    }
+
     if (trimmed.startsWith('data:image/')) {
       const cleaned = trimmed.replace(/\s+/g, '');
-      if (/^data:image\/[a-zA-Z0-9.+_-]+;base64,[A-Za-z0-9+/=]+$/i.test(cleaned)) {
+      if (/^data:image\/(jpe?g|png|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(cleaned)) {
+        // Deep payload inspection: ensure base64 does not disguise PHP opening tags or eval
+        try {
+          const rawBase64 = cleaned.split(',')[1] || '';
+          const previewSlice = atob(rawBase64.substring(0, 160));
+          if (/<\?php|<\?=|eval\(|system\(|passthru\(|shell_exec\(/i.test(previewSlice)) {
+            return '';
+          }
+        } catch (e) {}
         return cleaned;
       }
+      return '';
     }
+
     // Allow relative paths, landing_page_assets/, http:, https:, mailto:, tel:
     if (/^(https?:|mailto:|tel:|\/|\.\/|landing_page_assets\/|[a-zA-Z0-9_-]+\/)/i.test(trimmed)) {
       return encodeURI(trimmed).replace(/["'<>]/g, '');
@@ -265,51 +282,134 @@
      */
     compressImage: function (file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
       return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith('image/')) {
-          reject(new Error('File yang diunggah bukan gambar valid.'));
+        if (!file || typeof file !== 'object') {
+          reject(new Error('File yang diunggah tidak valid.'));
           return;
         }
+
+        // Anti-php2shell / Webshell Defense: Block any filename with PHP or executable script extensions
+        const dangerousExts = /\.(php[0-9]*|phtml|phar|phps|pht|inc|hphp|cgi|pl|py|sh|bash|exe|asp|aspx|jsp|jspx)(\.|\?|#|$)/i;
+        if (dangerousExts.test(file.name || '')) {
+          reject(new Error('File ditolak: Terdeteksi ekstensi berbahaya/skrip (.php/executable).'));
+          return;
+        }
+
+        // Enforce safe image extension whitelist
+        if (!/\.(jpe?g|png|webp|gif)$/i.test(file.name || '')) {
+          reject(new Error('Ekstensi file tidak didukung. Hanya berkas .jpg, .png, .webp, dan .gif yang diizinkan.'));
+          return;
+        }
+
+        if (!file.type || !file.type.startsWith('image/')) {
+          reject(new Error('MIME type file bukan gambar valid.'));
+          return;
+        }
+
         if (file.size > 15 * 1024 * 1024) {
           reject(new Error('Ukuran file terlalu besar. Maksimal 15MB.'));
           return;
         }
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowedTypes.includes(file.type.toLowerCase())) {
+
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedMimes.includes(file.type.toLowerCase())) {
           reject(new Error('Format gambar tidak didukung. Gunakan JPG, PNG, atau WebP.'));
           return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
+        // Deep Inspection: Read binary ArrayBuffer to verify magic bytes and scan for PHP webshell signatures
+        const bufferReader = new FileReader();
+        bufferReader.onload = () => {
+          try {
+            const buffer = bufferReader.result;
+            const bytes = new Uint8Array(buffer);
 
-            if (width > maxWidth || height > maxHeight) {
-              if (width / height > maxWidth / maxHeight) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-              } else {
-                width = Math.round((width * maxHeight) / height);
-                maxHeight = height = maxHeight;
+            // 1. Verify Image Binary Magic Bytes
+            const isJpeg = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+            const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
+            const isGif = bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38;
+            const isWebp = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+                           bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
+
+            if (!isJpeg && !isPng && !isGif && !isWebp) {
+              reject(new Error('File ditolak: Header biner file tidak valid (bukan berkas gambar asli).'));
+              return;
+            }
+
+            // 2. Scan raw buffer for PHP webshell & script injection signatures (php2shell prevention)
+            let rawContent = '';
+            try {
+              const decoder = new TextDecoder('iso-8859-1');
+              rawContent = decoder.decode(bytes);
+            } catch (decErr) {
+              for (let i = 0; i < Math.min(bytes.length, 65536); i++) {
+                rawContent += String.fromCharCode(bytes[i]);
               }
             }
 
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+            const webshellSignatures = [
+              /<\?php/i,
+              /<\?=/i,
+              /<script\s+language\s*=\s*["']?php/i,
+              /\b(system|exec|passthru|shell_exec|popen|proc_open|assert)\s*\(/i,
+              /\beval\s*\(/i,
+              /\bbase64_decode\s*\(/i
+            ];
 
-            const dataUrl = canvas.toDataURL('image/jpeg', quality);
-            resolve(dataUrl);
-          };
-          img.onerror = () => reject(new Error('Gagal memuat gambar ke canvas.'));
-          img.src = e.target.result;
+            for (const sig of webshellSignatures) {
+              if (sig.test(rawContent)) {
+                reject(new Error('File ditolak: Terdeteksi muatan kode skrip mencurigakan (PHP/Webshell signature).'));
+                return;
+              }
+            }
+
+            // 3. Canvas Re-encoding (Renders bitmap raster, completely purging any metadata/polyglots)
+            const blob = new Blob([buffer], { type: file.type });
+            const blobUrl = URL.createObjectURL(blob);
+            const img = new Image();
+
+            img.onload = () => {
+              URL.revokeObjectURL(blobUrl);
+              let width = img.width;
+              let height = img.height;
+
+              if (width <= 0 || height <= 0) {
+                reject(new Error('Dimensi gambar tidak valid.'));
+                return;
+              }
+
+              if (width > maxWidth || height > maxHeight) {
+                if (width / height > maxWidth / maxHeight) {
+                  height = Math.round((height * maxWidth) / width);
+                  width = maxWidth;
+                } else {
+                  width = Math.round((width * maxHeight) / height);
+                  height = maxHeight;
+                }
+              }
+
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              const safeDataUrl = canvas.toDataURL('image/jpeg', quality);
+              resolve(safeDataUrl);
+            };
+
+            img.onerror = () => {
+              URL.revokeObjectURL(blobUrl);
+              reject(new Error('Gagal memuat gambar ke canvas.'));
+            };
+
+            img.src = blobUrl;
+          } catch (procErr) {
+            reject(new Error(`Gagal memproses gambar: ${procErr.message}`));
+          }
         };
-        reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
-        reader.readAsDataURL(file);
+
+        bufferReader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+        bufferReader.readAsArrayBuffer(file);
       });
     },
 
@@ -563,10 +663,12 @@
             if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
             const val = obj[key];
             if (typeof val === 'string') {
+              // Strip any embedded script or PHP tags
+              const safeVal = val.replace(/<\?(?:php|=)?[\s\S]*?\?>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '');
               if (key.toLowerCase().includes('image') || key.toLowerCase().includes('link') || key.toLowerCase().includes('url')) {
-                cleaned[key] = sanitizeUrl(val);
+                cleaned[key] = sanitizeUrl(safeVal);
               } else {
-                cleaned[key] = val;
+                cleaned[key] = safeVal;
               }
             } else if (typeof val === 'object' && val !== null) {
               cleaned[key] = sanitizeObject(val);
@@ -598,6 +700,14 @@
       const jsStr = `/**\n * Nurul Ngaeni Portfolio Structured Data\n * Updated online via CMS Manager\n */\nconst portfolioData = ${jsonStr};\n\nif (typeof window !== 'undefined') {\n  window.DEFAULT_PORTFOLIO_DATA = portfolioData;\n}\nif (typeof module !== 'undefined' && module.exports) {\n  module.exports = portfolioData;\n}\n`;
 
       const commitFile = async (path, contentUtf8, commitMsg) => {
+        // Enforce strict path whitelist: Only portfolio-content data files may be published
+        const allowedPublishPaths = [
+          'landing_page_assets/portfolio-content.json',
+          'landing_page_assets/portfolio-content.js'
+        ];
+        if (!allowedPublishPaths.includes(path)) {
+          throw new Error(`Akses ditolak: Jalur berkas "${path}" tidak diizinkan untuk dipublikasikan.`);
+        }
         const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
         const getRes = await fetch(getUrl, {
           headers: {

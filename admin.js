@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label for="file_ach_${idx}" class="btn btn-primary btn-sm" style="cursor: pointer;">
                       <i class="bi bi-upload"></i> Unggah Piagam
                     </label>
-                    <input type="file" id="file_ach_${idx}" class="input-ach-file" data-idx="${idx}" accept="image/*" style="display: none;">
+                    <input type="file" id="file_ach_${idx}" class="input-ach-file" data-idx="${idx}" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" style="display: none;">
                     <button type="button" class="btn btn-outline btn-sm btn-reset-ach-img" data-idx="${idx}" title="Kembalikan foto bawaan">
                       <i class="bi bi-arrow-counterclockwise"></i> Reset
                     </button>
