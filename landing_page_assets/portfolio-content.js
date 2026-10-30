@@ -14,12 +14,12 @@ const portfolioData = {
     "whatsapp": "+62 8571 2314 820",
     "whatsappLink": "https://wa.me/6285712314820",
     "linkedin": "https://id.linkedin.com/in/nurul-ngaeni-608187320",
-    "heroImage": "landing_page_assets/hero/hero-nurul-cover.png",
-    "heroImageWebp": "landing_page_assets/hero/hero-nurul-cover.webp",
-    "aboutImage": "landing_page_assets/about/profile-formal.png",
-    "aboutImageWebp": "landing_page_assets/about/profile-formal.webp",
-    "closingImage": "landing_page_assets/hero/hero-nurul-closing.png",
-    "closingImageWebp": "landing_page_assets/hero/hero-nurul-closing.webp"
+    "heroImage": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/hero/hero-nurul-cover.png",
+    "heroImageWebp": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/hero/hero-nurul-cover.png",
+    "aboutImage": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/about/profile-formal.png",
+    "aboutImageWebp": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/about/profile-formal.png",
+    "closingImage": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/hero/hero-nurul-closing.png",
+    "closingImageWebp": "file:///D:/Kuliah/Magang/Web/Web%20Nurul/landing_page_assets/hero/hero-nurul-closing.png"
   },
   "stats": [
     {
