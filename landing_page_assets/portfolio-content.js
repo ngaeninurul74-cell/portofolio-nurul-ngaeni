@@ -12,28 +12,34 @@ export const portfolioData = {
     "heroImage": "landing_page_assets/hero/hero-nurul-cover.png",
     "heroImageWebp": "landing_page_assets/hero/hero-nurul-cover.webp",
     "aboutImage": "landing_page_assets/about/profile-formal.png",
-    "closingImage": "landing_page_assets/hero/hero-nurul-closing.png"
+    "aboutImageWebp": "landing_page_assets/about/profile-formal.webp",
+    "closingImage": "landing_page_assets/hero/hero-nurul-closing.png",
+    "closingImageWebp": "landing_page_assets/hero/hero-nurul-closing.webp"
   },
   "stats": [
     {
       "value": "40+",
       "label": "Acara MC & Host",
-      "desc": "Expo UMKM, Karnaval, Festival Budaya & Acara Kampus"
+      "desc": "Expo UMKM, Karnaval Budaya, Acara Kampus & Formal",
+      "icon": "bi bi-mic-fill"
     },
     {
       "value": "25+",
       "label": "Sesi Pemateri & Guru Tamu",
-      "desc": "Edukasi Marketing, Broadcasting, LDKS & Kepemimpinan"
+      "desc": "Edukasi Pemasaran, Broadcasting, LDKS & Kepemimpinan",
+      "icon": "bi bi-megaphone-fill"
     },
     {
       "value": "15+",
       "label": "Organisasi & Komunitas",
-      "desc": "Kiprah aktif di kepemudaan, pariwisata, dan kemahasiswaan"
+      "desc": "Kiprah aktif di kepemudaan, pariwisata, dan kemahasiswaan",
+      "icon": "bi bi-people-fill"
     },
     {
       "value": "8+",
       "label": "Penghargaan & Prestasi",
-      "desc": "Lulusan Terbaik, Juara 1 LKS Marketing, Mbak Klaten"
+      "desc": "Lulusan Terbaik, Juara 1 LKS Marketing, Mbak Klaten",
+      "icon": "bi bi-trophy-fill"
     }
   ],
   "partners": [
@@ -50,28 +56,55 @@ export const portfolioData = {
       "title": "Master of Ceremony (MC)",
       "desc": "Memandu acara formal kenegaraan, seminar akademik, karnaval budaya, festival kreatif hingga expo kewirausahaan dengan artikulasi prima dan energi dinamis.",
       "count": "40+ Acara",
-      "icon": "mic"
+      "icon": "bi bi-mic"
     },
     {
       "id": "moderator",
       "title": "Moderator Acara & Talkshow",
       "desc": "Mengalirkan diskusi interaktif bersama kepala daerah, tokoh industri, akademisi, dan praktisi bisnis dengan penguasaan topik yang tajam.",
       "count": "15+ Talkshow",
-      "icon": "users"
+      "icon": "bi bi-chat-square-quote"
     },
     {
       "id": "speaker",
       "title": "Narasumber & Guru Tamu",
       "desc": "Berbagi wawasan seputar strategi pemasaran digital, komunikasi publik, personal branding, broadcasting, dan kepemimpinan organisasi.",
       "count": "25+ Sesi",
-      "icon": "award"
+      "icon": "bi bi-mortarboard"
     },
     {
       "id": "modeling",
       "title": "Muse & Fashion Model",
       "desc": "Representasi busana daerah dan karya desainer pada ajang Klaten Fashion Festival, Lurik Karnival, hingga promosi wisata budaya.",
       "count": "7+ Runway & Kampanye",
-      "icon": "camera"
+      "icon": "bi bi-camera"
+    }
+  ],
+  "values": [
+    {
+      "title": "Integrity",
+      "desc": "Menjaga kejujuran, tanggung jawab, dan akurasi informasi dalam menjalankan setiap tugas.",
+      "icon": "bi bi-shield-check"
+    },
+    {
+      "title": "Collaboration",
+      "desc": "Menghargai kerja sama, komunikasi terbuka, dan kontribusi konstruktif setiap anggota tim.",
+      "icon": "bi bi-hand-thumbs-up"
+    },
+    {
+      "title": "Continuous Learning",
+      "desc": "Terbuka terhadap masukan dan berkomitmen mengembangkan keahlian secara berkesinambungan.",
+      "icon": "bi bi-book"
+    },
+    {
+      "title": "Adaptability",
+      "desc": "Cepat menyesuaikan diri dengan karakter audiens, situasi panggung, dan dinamika lingkungan kerja.",
+      "icon": "bi bi-arrow-repeat"
+    },
+    {
+      "title": "Impact Orientation",
+      "desc": "Mendorong agar setiap inisiatif dan kegiatan memberikan manfaat nyata bagi seluruh pihak.",
+      "icon": "bi bi-bullseye"
     }
   ],
   "quote": {
@@ -81,9 +114,11 @@ export const portfolioData = {
   "projects": [
     {
       "title": "SEGARA untuk IKANURA",
-      "subtitle": "Sentra Gerak Agromina untuk Ikan Unggul Rakyat (PPK Ormawa)",
+      "category": "PPK Ormawa",
+      "subtitle": "Sentra Gerak Agromina untuk Ikan Unggul Rakyat",
       "role": "Humas & Ketua Segara Raya (Selesai Abdidaya)",
-      "description": "Program pemberdayaan masyarakat berbasis potensi perikanan air tawar di Kalurahan Sidoagung, Sleman. Berfokus pada nilai tambah produk perikanan, pemasaran digital, dan kolaborasi multipihak.",
+      "description": "Program pemberdayaan masyarakat berbasis potensi perikanan air tawar di Kalurahan Sidoagung, Sleman. Berfokus pada nilai tambah produk perikanan, penguatan usaha masyarakat, pemasaran digital, dan kolaborasi multipihak.",
+      "icon": "bi bi-water",
       "images": [
         "landing_page_assets/projects/project-ikanura-cover.png",
         "landing_page_assets/projects/project-ikanura-activity.jpg"
@@ -91,9 +126,11 @@ export const portfolioData = {
     },
     {
       "title": "Ayo Piknik Klaten (APIK)",
+      "category": "Pariwisata & Budaya",
       "subtitle": "Platform Informasi & Promosi Potensi Wisata Lokal",
       "role": "Admin 1 & Content Creator",
-      "description": "Mendukung penyebaran informasi destinasi wisata, budaya, dan kuliner Klaten melalui komunikasi digital pariwisata yang menarik dan relevan bagi generasi muda.",
+      "description": "Mendukung penyebaran informasi destinasi wisata, budaya, dan kuliner Klaten melalui komunikasi digital pariwisata yang informatif, menarik, dan relevan bagi masyarakat luas.",
+      "icon": "bi bi-geo-alt",
       "images": [
         "landing_page_assets/projects/project-apik-hero-landscape.jpg",
         "landing_page_assets/projects/project-apik-destinasi.png",
@@ -103,9 +140,11 @@ export const portfolioData = {
     },
     {
       "title": "Wirausaha Mandiri",
+      "category": "Brand & Bisnis",
       "subtitle": "Nurova.Style & Klathi Souvenir",
       "role": "Founder & Owner",
-      "description": "Mengembangkan brand fashion muslimah Nurova.Style serta produk cenderamata lokal Klathi Souvenir dengan manajemen pemasaran mandiri.",
+      "description": "Mengembangkan brand fashion muslimah Nurova.Style serta produk cenderamata lokal Klathi Souvenir dengan integrasi strategi branding dan pemasaran mandiri.",
+      "icon": "bi bi-bag-check",
       "images": [
         "landing_page_assets/projects/business-nurova-style.png",
         "landing_page_assets/projects/business-klathi-souvenir.png"
@@ -116,37 +155,44 @@ export const portfolioData = {
     {
       "title": "Siswa Lulusan Terbaik 1",
       "issuer": "SMKN 1 Jogonalan | 2024",
-      "image": "landing_page_assets/achievements/award-lulusan-terbaik.png"
+      "image": "landing_page_assets/achievements/award-lulusan-terbaik.png",
+      "icon": "bi bi-mortarboard"
     },
     {
       "title": "Juara 1 Lomba Kompetensi Siswa (LKS) Bidang Marketing",
       "issuer": "Tingkat Wilayah | 2024",
-      "image": "landing_page_assets/achievements/award-juara1-lks-marketing.png"
+      "image": "landing_page_assets/achievements/award-juara1-lks-marketing.png",
+      "icon": "bi bi-award"
     },
     {
       "title": "Juara 1 BMC TalkShow Kewirausahaan",
       "issuer": "Kompetisi Bisnis Model Kanvas | 2025",
-      "image": "landing_page_assets/achievements/award-juara1-bmc-talkshow.png"
+      "image": "landing_page_assets/achievements/award-juara1-bmc-talkshow.png",
+      "icon": "bi bi-trophy"
     },
     {
       "title": "Mbak Klaten Intelegensi",
       "issuer": "Pemilihan Mas & Mbak Duta Wisata Klaten | 2025",
-      "image": "landing_page_assets/achievements/award-mbak-klaten-intelegensi.png"
+      "image": "landing_page_assets/achievements/award-mbak-klaten-intelegensi.png",
+      "icon": "bi bi-star"
     },
     {
       "title": "Duta Humas Jawa Tengah",
       "issuer": "Humas Kepemudaan Jateng | 2023",
-      "image": "landing_page_assets/achievements/award-duta-humas-jateng.jpg"
+      "image": "landing_page_assets/achievements/award-duta-humas-jateng.jpg",
+      "icon": "bi bi-person-badge"
     },
     {
       "title": "Mahasiswa Berprestasi UNY",
       "issuer": "Universitas Negeri Yogyakarta | 2026",
-      "image": "landing_page_assets/achievements/award-mahasiswa-berprestasi-uny.png"
+      "image": "landing_page_assets/achievements/award-mahasiswa-berprestasi-uny.png",
+      "icon": "bi bi-patch-check"
     },
     {
       "title": "Juara 2 Abdidaya PPKO",
       "issuer": "KSI Mist FMIPA UNY | 2026",
-      "image": "landing_page_assets/achievements/award-abdidaya-ppko.png"
+      "image": "landing_page_assets/achievements/award-abdidaya-ppko.png",
+      "icon": "bi bi-diagram-3"
     }
   ]
 };

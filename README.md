@@ -4,7 +4,7 @@ Repositori ini berisi aset digital, materi kurasi, dan dokumentasi foto untuk we
 
 ---
 
-## 👤 Tentang Nurul Ngaeni
+## Profil Singkat
 - **Pendidikan**: Mahasiswa S1 Manajemen Universitas Negeri Yogyakarta (UNY)
 - **Bidang Keahlian**: Public Speaking, Event Management, Digital Marketing, dan Brand Communication
 - **Kontak**:
@@ -15,7 +15,7 @@ Repositori ini berisi aset digital, materi kurasi, dan dokumentasi foto untuk we
 
 ---
 
-## 📁 Struktur Direktori
+## Struktur Direktori
 - **`landing_page_assets/`**: Aset foto yang sudah dikurasi, dioptimasi, dan diorganisir secara semantik untuk kebutuhan website:
   - `hero/`: Foto profil utama untuk hero section & closing CTA
   - `about/`: Foto profil formal dan infografis kompetensi
@@ -26,7 +26,7 @@ Repositori ini berisi aset digital, materi kurasi, dan dokumentasi foto untuk we
   - `organizations/`: Dokumentasi Pramuka, Dewan Kerja Cabang, dan Duta Anti-Bullying
   - `achievements/`: Foto penghargaan, piala LKS Marketing, dan Mbak Klaten
   - `projects/`: Dokumentasi proyek PPK Ormawa (Segara Ikanura), Ayo Piknik Klaten (APIK), dan Bisnis Hijab
-  - `portfolio-content.json` & `portfolio-content.js`: Konten teks dan statistik siap pakai
+  - `portfolio-content.json` & `portfolio-content.js`: Konten teks dan statistik siap pakai dengan integrasi kelas Bootstrap Icons
   - `assets_manifest.json`: Metadata dimensi, resolusi, dan format aset
 - **`foto_portofolio/`**: 52 foto asli beresolusi tinggi hasil ekstraksi dari berkas PDF portofolio
 - **`halaman_portofolio/`**: Render halaman penuh (Halaman 1–15) sebagai referensi visual tata letak
@@ -34,10 +34,12 @@ Repositori ini berisi aset digital, materi kurasi, dan dokumentasi foto untuk we
 
 ---
 
-## 🚀 Penggunaan Aset Web
-Semua foto di dalam `landing_page_assets/` tersedia dalam format **WebP** (modern & cepat) dan **PNG/JPG** (resolusi tinggi).
-Data konten teks dan angka statistik dapat langsung diimpor dari:
+## Penggunaan Aset Web
+Semua foto di dalam `landing_page_assets/` tersedia dalam format **WebP** (modern & performa tinggi) dan **PNG/JPG** (resolusi tinggi).
+Ikon antarmuka menggunakan **Bootstrap Icons** (`bi bi-*`).
+
+Data konten teks, metrik, dan ikon dapat langsung diimpor dari:
 ```javascript
 import { portfolioData } from './landing_page_assets/portfolio-content.js';
 ```
-atau menggunakan `landing_page_assets/portfolio-content.json`.
+atau menggunakan file `landing_page_assets/portfolio-content.json`.
