@@ -22,7 +22,7 @@
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(245, 158, 11, 0.35);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   color: #f8fafc;
   padding: 14px 20px;
   border-radius: 12px;
@@ -69,7 +69,7 @@
 .cms-modal-card {
   background: rgba(17, 24, 39, 0.95);
   border: 1px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
   border-radius: 18px;
   width: 100%;
   max-width: 420px;
