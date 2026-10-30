@@ -1,0 +1,10 @@
+# Logs & temporary files
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Optional: jika file PDF asli (37 MB) tidak ingin di-push ke GitHub, buka komentar baris di bawah:
+# PORTOFOLIO NURUL NGAENI.pdf
