@@ -22,8 +22,6 @@
   const STORAGE_KEY = 'nurul_portfolio_data';
   const AUTH_KEY = 'nurul_admin_auth_state';
   const PW_HASH_KEY = 'nurul_admin_pw_hash';
-  // Default password: 'nurul2026'
-  const DEFAULT_PW_HASH = '91a27b2d71a8fcad20e20f56b12358bcc708d7ec5c9611777167a3cbb0b85c8d';
 
   const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nurul_cms_sync') : null;
 
@@ -111,6 +109,33 @@
     },
 
     /**
+     * Check if admin password has been set up in localStorage
+     */
+    hasPassword: function () {
+      try {
+        return !!localStorage.getItem(PW_HASH_KEY);
+      } catch (e) {
+        return false;
+      }
+    },
+
+    /**
+     * Set or initialize admin password
+     */
+    setPassword: async function (newPassword) {
+      if (!newPassword || newPassword.length < 6) {
+        return { success: false, message: 'Password baru minimal harus 6 karakter.' };
+      }
+      try {
+        const newHash = await computeSha256(newPassword);
+        localStorage.setItem(PW_HASH_KEY, newHash);
+        return { success: true, message: 'Password admin berhasil disetel.' };
+      } catch (e) {
+        return { success: false, message: 'Gagal mengenkripsi password.' };
+      }
+    },
+
+    /**
      * Authenticate admin with username & password
      */
     login: async function (username, password, remember = false) {
@@ -119,8 +144,27 @@
         return { success: false, message: 'Username tidak terdaftar.' };
       }
 
+      const activeHash = localStorage.getItem(PW_HASH_KEY);
+
+      // If no password set yet, first login establishes the master password
+      if (!activeHash) {
+        if (!password || password.length < 6) {
+          return {
+            success: false,
+            needsSetup: true,
+            message: 'Belum ada sandi yang terdaftar. Masukkan password baru (minimal 6 karakter) untuk mengamankan akses admin.'
+          };
+        }
+        const initialHash = await computeSha256(password);
+        localStorage.setItem(PW_HASH_KEY, initialHash);
+        sessionStorage.setItem(AUTH_KEY, 'true');
+        if (remember) {
+          localStorage.setItem(AUTH_KEY, 'true');
+        }
+        return { success: true, isInitialSetup: true };
+      }
+
       const enteredHash = await computeSha256(password || '');
-      const activeHash = localStorage.getItem(PW_HASH_KEY) || DEFAULT_PW_HASH;
 
       if (enteredHash === activeHash) {
         sessionStorage.setItem(AUTH_KEY, 'true');
@@ -147,11 +191,13 @@
      * Change admin password
      */
     changePassword: async function (oldPassword, newPassword) {
-      const oldHash = await computeSha256(oldPassword || '');
-      const activeHash = localStorage.getItem(PW_HASH_KEY) || DEFAULT_PW_HASH;
+      const activeHash = localStorage.getItem(PW_HASH_KEY);
 
-      if (oldHash !== activeHash) {
-        return { success: false, message: 'Password lama salah.' };
+      if (activeHash) {
+        const oldHash = await computeSha256(oldPassword || '');
+        if (oldHash !== activeHash) {
+          return { success: false, message: 'Password lama salah.' };
+        }
       }
 
       if (!newPassword || newPassword.length < 6) {
@@ -402,6 +448,7 @@
       const data = this.getData();
       if (!data.personal) data.personal = {};
       data.personal[type] = dataUrl;
+      data.personal[type + 'Webp'] = dataUrl;
       return this.saveData(data);
     },
 
@@ -413,6 +460,9 @@
       const data = this.getData();
       if (defaults.personal && defaults.personal[type]) {
         data.personal[type] = defaults.personal[type];
+        if (defaults.personal[type + 'Webp']) {
+          data.personal[type + 'Webp'] = defaults.personal[type + 'Webp'];
+        }
         return this.saveData(data);
       }
       return false;
@@ -449,6 +499,107 @@
     },
 
     /**
+     * Publish active portfolio data directly to GitHub Pages repository (Internet Live)
+     */
+    publishToGitHub: async function (token, repoOwner = 'ngaeninurul74-cell', repoName = 'portofolio-nurul-ngaeni', branch = 'gh-pages') {
+      if (!token || !token.trim()) {
+        throw new Error('Token GitHub diperlukan untuk mempublikasikan ke internet.');
+      }
+
+      const activeData = this.getData();
+      const jsonStr = JSON.stringify(activeData, null, 2);
+      const jsStr = `/**\n * Nurul Ngaeni Portfolio Structured Data\n * Updated online via CMS Manager\n */\nconst portfolioData = ${jsonStr};\n\nif (typeof window !== 'undefined') {\n  window.DEFAULT_PORTFOLIO_DATA = portfolioData;\n}\nif (typeof module !== 'undefined' && module.exports) {\n  module.exports = portfolioData;\n}\n`;
+
+      const commitFile = async (path, contentUtf8, commitMsg) => {
+        const getUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}?ref=${branch}`;
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `Bearer ${token.trim()}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        let sha = null;
+        if (getRes.ok) {
+          const fileInfo = await getRes.json();
+          sha = fileInfo.sha;
+        }
+
+        const utf8Bytes = new TextEncoder().encode(contentUtf8);
+        let binaryStr = '';
+        for (let i = 0; i < utf8Bytes.length; i++) {
+          binaryStr += String.fromCharCode(utf8Bytes[i]);
+        }
+        const b64 = btoa(binaryStr);
+
+        const putUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
+        const putRes = await fetch(putUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token.trim()}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: commitMsg,
+            content: b64,
+            branch: branch,
+            sha: sha || undefined
+          })
+        });
+
+        if (!putRes.ok) {
+          const err = await putRes.json().catch(() => ({}));
+          throw new Error(err.message || `Gagal memperbarui berkas ${path} di GitHub.`);
+        }
+
+        return await putRes.json();
+      };
+
+      const jsonRes = await commitFile('landing_page_assets/portfolio-content.json', jsonStr, 'chore(cms): update portfolio content online (JSON)');
+      const jsRes = await commitFile('landing_page_assets/portfolio-content.js', jsStr, 'chore(cms): update portfolio content online (JS)');
+
+      return { success: true, jsonRes, jsRes };
+    },
+
+    /**
+     * Fetch live internet content from GitHub Pages / Web server (Cache-busted)
+     */
+    fetchLiveInternetContent: async function () {
+      try {
+        const res = await fetch('landing_page_assets/portfolio-content.json?t=' + Date.now());
+        if (res.ok) {
+          const liveData = await res.json();
+          if (liveData && liveData.personal) {
+            this.hydrateLandingPage(liveData);
+            return liveData;
+          }
+        }
+      } catch (err) {
+        // Fallback silently to bundled data
+      }
+      return null;
+    },
+
+    /**
+     * Export JS data file for native repository usage
+     */
+    exportJS: function (filename) {
+      const data = this.getData();
+      const jsonStr = JSON.stringify(data, null, 2);
+      const jsStr = `/**\n * Nurul Ngaeni Portfolio Structured Data\n * Exported from CMS Manager\n */\nconst portfolioData = ${jsonStr};\n\nif (typeof window !== 'undefined') {\n  window.DEFAULT_PORTFOLIO_DATA = portfolioData;\n}\nif (typeof module !== 'undefined' && module.exports) {\n  module.exports = portfolioData;\n}\n`;
+      const blob = new Blob([jsStr], { type: 'text/javascript;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'portfolio-content.js';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    },
+
+    /**
      * Hydrate DOM elements with active CMS data (Text, Stats, Photos across sections)
      */
     hydrateLandingPage: function () {
@@ -480,7 +631,12 @@
         if (heroImg && safeHero) {
           heroImg.src = safeHero;
           const heroSource = heroImg.closest('picture')?.querySelector('source');
-          if (heroSource) heroSource.srcset = sanitizeUrl(p.heroImageWebp) || safeHero;
+          if (heroSource) {
+            heroSource.srcset = safeHero;
+            if (safeHero.startsWith('data:')) {
+              heroSource.removeAttribute('type');
+            }
+          }
         }
 
         const aboutImg = document.getElementById('aboutImage') || document.querySelector('.about-photo-card img');
@@ -488,7 +644,12 @@
         if (aboutImg && safeAbout) {
           aboutImg.src = safeAbout;
           const aboutSource = aboutImg.closest('picture')?.querySelector('source');
-          if (aboutSource) aboutSource.srcset = sanitizeUrl(p.aboutImageWebp) || safeAbout;
+          if (aboutSource) {
+            aboutSource.srcset = safeAbout;
+            if (safeAbout.startsWith('data:')) {
+              aboutSource.removeAttribute('type');
+            }
+          }
         }
 
         const closingImg = document.getElementById('closingImage') || document.querySelector('.contact-photo-side img');
@@ -496,7 +657,12 @@
         if (closingImg && safeClosing) {
           closingImg.src = safeClosing;
           const closingSource = closingImg.closest('picture')?.querySelector('source');
-          if (closingSource) closingSource.srcset = sanitizeUrl(p.closingImageWebp) || safeClosing;
+          if (closingSource) {
+            closingSource.srcset = safeClosing;
+            if (safeClosing.startsWith('data:')) {
+              closingSource.removeAttribute('type');
+            }
+          }
         }
 
         // WhatsApp links (Sanitized)
@@ -550,7 +716,7 @@
           if (serviceCards[idx]) {
             const title = serviceCards[idx].querySelector('.service-title');
             const badge = serviceCards[idx].querySelector('.service-badge');
-            const desc = serviceCards[idx].querySelector('.service-desc');
+            const desc = serviceCards[idx].querySelector('.service-desc, .service-text');
             if (title) title.textContent = srv.title;
             if (badge) badge.textContent = srv.badge || srv.count;
             if (desc) desc.textContent = srv.desc;
@@ -700,7 +866,7 @@
     },
 
     /**
-     * Listen for external updates (e.g., changes made in admin.html)
+     * Listen for external updates (e.g., changes made in admin.html or across browser tabs)
      */
     initSyncListener: function () {
       const self = this;
@@ -718,6 +884,16 @@
 
       window.addEventListener('portfolioDataUpdated', () => {
         self.hydrateLandingPage();
+      });
+
+      window.addEventListener('focus', () => {
+        self.hydrateLandingPage();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          self.hydrateLandingPage();
+        }
       });
     },
 
@@ -817,7 +993,7 @@
             <p>Masukkan password admin untuk mengaktifkan mode edit langsung.</p>
           </div>
           <div class="cms-modal-body">
-            <input type="password" id="inlineAdminPwInput" class="form-input" placeholder="Password Admin (Default: nurul2026)">
+            <input type="password" id="inlineAdminPwInput" class="form-input" placeholder="Masukkan Password Admin">
             <div id="inlinePwError" style="color: #ef4444; font-size: 0.8rem; margin-top: 6px; display: none;">Password salah.</div>
           </div>
           <div class="cms-modal-footer">
@@ -833,6 +1009,86 @@
       const saveBtn = document.getElementById('cmsSaveInlineBtn');
       const cancelBtn = document.getElementById('cmsCancelInlineBtn');
 
+      const setupInlinePhotoBadges = (active) => {
+        document.querySelectorAll('.cms-inline-photo-btn, .cms-inline-photo-input').forEach(el => el.remove());
+        if (!active) return;
+
+        const attachBadge = (container, labelText, onFileSelected) => {
+          if (!container) return;
+          container.style.position = 'relative';
+
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.className = 'cms-inline-photo-input';
+          fileInput.style.display = 'none';
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cms-inline-photo-btn';
+          btn.innerHTML = `<i class="bi bi-camera-fill"></i><span>Ganti ${escapeHtml(labelText)}</span>`;
+          btn.title = `Ganti foto ${labelText}`;
+
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.click();
+          });
+
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+              CMS.showToast('Mengompres dan memperbarui foto...', 'info');
+              const dataUrl = await CMS.compressImage(file, 1200, 1200, 0.85);
+              onFileSelected(dataUrl);
+              CMS.hydrateLandingPage();
+              CMS.showToast(`Foto ${labelText} berhasil diperbarui!`);
+            } catch (err) {
+              CMS.showToast(err.message, 'error');
+            }
+          });
+
+          container.appendChild(fileInput);
+          container.appendChild(btn);
+        };
+
+        // 1. Hero Photo
+        const heroVisual = document.querySelector('.hero-visual .visual-wrapper') || document.getElementById('heroImage')?.parentElement;
+        attachBadge(heroVisual, 'Hero', (dataUrl) => CMS.updateProfilePhoto('heroImage', dataUrl));
+
+        // 2. About Photo
+        const aboutCard = document.querySelector('.about-photo-card') || document.getElementById('aboutImage')?.parentElement;
+        attachBadge(aboutCard, 'Formal', (dataUrl) => CMS.updateProfilePhoto('aboutImage', dataUrl));
+
+        // 3. Service Cards (4 items)
+        const serviceCards = document.querySelectorAll('.services-grid .service-card');
+        serviceCards.forEach((card, idx) => {
+          attachBadge(card, `Layanan ${idx + 1}`, (dataUrl) => CMS.updateServicePhoto(idx, dataUrl));
+        });
+
+        // 4. Project Cards (3 items)
+        const projectCards = document.querySelectorAll('.projects-grid .project-card');
+        projectCards.forEach((card, idx) => {
+          const imgBox = card.querySelector('.project-image-box') || card;
+          attachBadge(imgBox, `Proyek ${idx + 1}`, (dataUrl) => CMS.updateProjectPhoto(idx, dataUrl));
+        });
+
+        // 5. Award Cards (7 items)
+        const awardCards = document.querySelectorAll('.achievements-grid .award-card');
+        awardCards.forEach((card, idx) => {
+          attachBadge(card, `Piagam ${idx + 1}`, (dataUrl) => CMS.updateAchievementPhoto(idx, dataUrl));
+        });
+
+        // 6. Quote Banner Backdrop
+        const quoteBanner = document.querySelector('.quote-banner');
+        attachBadge(quoteBanner, 'Latar Quote', (dataUrl) => CMS.updateQuoteBg(dataUrl));
+
+        // 7. Closing Photo
+        const closingPhoto = document.querySelector('.contact-photo-side') || document.getElementById('closingImage')?.parentElement;
+        attachBadge(closingPhoto, 'Kontak', (dataUrl) => CMS.updateProfilePhoto('closingImage', dataUrl));
+      };
+
       const setInlineEditMode = (active) => {
         isEditing = active;
         const cmsElements = document.querySelectorAll('[data-cms-key]');
@@ -845,7 +1101,8 @@
             el.setAttribute('contenteditable', 'true');
             el.classList.add('cms-editable-target');
           });
-          CMS.showToast('Mode Edit Aktif: Klik pada teks manapun untuk mengedit.');
+          setupInlinePhotoBadges(true);
+          CMS.showToast('Mode Edit Aktif: Klik teks untuk mengedit atau klik tombol kamera untuk ganti foto.');
         } else {
           topBanner.classList.remove('active');
           toggleBtn.classList.remove('active');
@@ -854,6 +1111,7 @@
             el.removeAttribute('contenteditable');
             el.classList.remove('cms-editable-target');
           });
+          setupInlinePhotoBadges(false);
         }
       };
 

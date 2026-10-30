@@ -19,8 +19,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="admin.css">
-  <link rel="stylesheet" href="cms.css">
+  <link rel="stylesheet" href="admin.css?v=2.3">
+  <link rel="stylesheet" href="cms.css?v=2.3">
 </head>
 
 <body>
@@ -31,8 +31,8 @@
         <div class="login-icon-box">
           <i class="bi bi-shield-lock-fill"></i>
         </div>
-        <h2>Portal Admin Portofolio</h2>
-        <p>Nurul Ngaeni &mdash; Panel Kontrol Konten & Galeri</p>
+        <h2 id="loginTitle">Portal Admin Portofolio</h2>
+        <p id="loginSubtitle">Nurul Ngaeni &mdash; Panel Kontrol Konten & Galeri</p>
       </div>
 
       <div id="loginErrorAlert" class="login-error-alert" style="display: none;">
@@ -73,7 +73,7 @@
 
       <div class="login-hint-pill">
         <i class="bi bi-info-circle-fill" style="color: var(--accent-gold);"></i>
-        <span>Akses Bawaan: <strong>admin</strong> / sandi: <strong>nurul2026</strong></span>
+        <span id="loginHintText">Panel admin terproteksi keamanan sandi.</span>
       </div>
     </div>
   </div>
@@ -99,9 +99,13 @@
             <i class="bi bi-box-arrow-up-right"></i>
             <span>Lihat Landing Page</span>
           </a>
-          <button id="btnSaveAll" class="btn btn-primary">
+          <button id="btnSaveAll" class="btn btn-primary" title="Simpan perubahan di browser">
             <i class="bi bi-floppy-fill"></i>
-            <span>Simpan Perubahan</span>
+            <span>Simpan</span>
+          </button>
+          <button id="btnPublishInternet" class="btn btn-success" title="Publikasikan konten live ke internet via GitHub Pages">
+            <i class="bi bi-cloud-arrow-up-fill"></i>
+            <span>Publikasikan ke Internet</span>
           </button>
           <button type="button" id="btnLogoutAdmin" class="btn btn-danger-soft" title="Keluar dari Panel Admin">
             <i class="bi bi-box-arrow-right"></i>
@@ -120,13 +124,15 @@
           <li>
             <button class="tab-btn active" data-tab="tab-hero">
               <i class="bi bi-person-vcard"></i>
-              <span>Profil & Hero</span>
+              <span>Profil & Foto Hero</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-about">
               <i class="bi bi-file-earmark-person"></i>
-              <span>Tentang Saya</span>
+              <span>Tentang Saya & Foto</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
@@ -139,36 +145,42 @@
             <button class="tab-btn" data-tab="tab-services">
               <i class="bi bi-mic"></i>
               <span>Layanan & Foto</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-projects">
               <i class="bi bi-briefcase"></i>
               <span>Proyek & Sampul</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-achievements">
               <i class="bi bi-trophy"></i>
               <span>Prestasi & Piagam</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-quote">
               <i class="bi bi-chat-quote"></i>
               <span>Filosofi & Latar</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-photos">
               <i class="bi bi-images"></i>
-              <span>Galeri Acara</span>
+              <span>Galeri Dokumentasi</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
             <button class="tab-btn" data-tab="tab-contact">
               <i class="bi bi-envelope-paper"></i>
-              <span>Kontak & Booking</span>
+              <span>Kontak & Foto</span>
+              <span class="badge-photo-tag"><i class="bi bi-camera-fill"></i> Foto</span>
             </button>
           </li>
           <li>
@@ -1018,7 +1030,7 @@
             <div class="form-grid" style="max-width: 500px;">
               <div class="form-group span-2">
                 <label class="form-label" for="changePwOld"><i class="bi bi-key"></i> Password Lama</label>
-                <input type="password" id="changePwOld" class="form-input" placeholder="Masukkan password lama (bawaan: nurul2026)">
+                <input type="password" id="changePwOld" class="form-input" placeholder="Masukkan password lama">
               </div>
 
               <div class="form-group span-2">
@@ -1076,9 +1088,76 @@
   </div>
 
   <!-- Scripts -->
-  <script src="landing_page_assets/portfolio-content.js"></script>
-  <script src="cms-manager.js"></script>
-  <script src="admin.js"></script>
+  <script src="landing_page_assets/portfolio-content.js?v=2.3"></script>
+  <script src="cms-manager.js?v=2.3"></script>
+  <script src="admin.js?v=2.3"></script>
+
+  <!-- Modal Publikasi Internet (GitHub Pages) -->
+  <div id="publishInternetModal" class="cms-modal-overlay" style="display: none;">
+    <div class="cms-modal-card" style="max-width: 520px;">
+      <div class="cms-modal-header">
+        <div class="modal-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          <i class="bi bi-cloud-arrow-up-fill"></i>
+        </div>
+        <h3>Publikasikan ke Internet</h3>
+        <p>Kirim update konten langsung ke repositori GitHub Pages agar live di internet untuk seluruh pengunjung.</p>
+      </div>
+
+      <div class="cms-modal-body">
+        <div id="publishAlertError" class="login-error-alert" style="display: none; margin-bottom: 14px;">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span id="publishAlertErrorText"></span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label"><i class="bi bi-github"></i> Repositori GitHub Target</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <input type="text" id="ghOwnerInput" class="form-input" value="ngaeninurul74-cell" readonly style="opacity: 0.8; font-size: 0.85rem;">
+            <input type="text" id="ghRepoInput" class="form-input" value="portofolio-nurul-ngaeni" readonly style="opacity: 0.8; font-size: 0.85rem;">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="ghBranchInput"><i class="bi bi-git"></i> Target Branch</label>
+          <input type="text" id="ghBranchInput" class="form-input" value="gh-pages" readonly style="opacity: 0.8; font-size: 0.85rem;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="ghTokenInput"><i class="bi bi-key-fill"></i> GitHub Personal Access Token (PAT)</label>
+          <div class="login-input-wrap">
+            <i class="bi bi-shield-lock login-input-icon"></i>
+            <input type="password" id="ghTokenInput" class="login-input" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+            <button type="button" id="toggleGhTokenBtn" class="login-toggle-pw" title="Lihat token">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; cursor: pointer;">
+              <input type="checkbox" id="rememberGhToken" checked>
+              <span>Ingat token di browser ini</span>
+            </label>
+            <a href="https://github.com/settings/tokens/new?scopes=repo&description=Nurul+CMS+Publisher" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--accent-gold); text-decoration: none;">
+              <i class="bi bi-box-arrow-up-right"></i> Buat Token GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="login-hint-pill" style="margin-top: 10px;">
+          <i class="bi bi-info-circle-fill" style="color: var(--accent-gold);"></i>
+          <span>Token hanya disimpan di browser lokal Anda (tidak di-push ke source code) untuk autorisasi commit ke GitHub Pages.</span>
+        </div>
+      </div>
+
+      <div class="cms-modal-footer">
+        <button type="button" id="btnCancelPublish" class="btn btn-outline">Batal</button>
+        <button type="button" id="btnConfirmPublish" class="btn btn-success">
+          <i class="bi bi-send-check-fill"></i>
+          <span>Publikasikan Sekarang</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

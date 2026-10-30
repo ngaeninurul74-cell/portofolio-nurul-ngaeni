@@ -1,7 +1,7 @@
 /**
  * Nurul Ngaeni Portfolio - CMS Admin Dashboard Logic
  * Features:
- * 1. Admin Authentication Gate (Login Screen, Remember Session, Logout, Password Change)
+ * 1. Admin Authentication Gate (Login Screen, Client-side Key Hash, Logout, Password Change)
  * 2. Multi-Content Photo Management across all sections:
  *    - Profile (Hero, About, Closing)
  *    - Services (MC, Moderator, Speaker, Modeling)
@@ -57,6 +57,33 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Authentication Gate ---
+  function updateLoginUI() {
+    const hasPw = CMSManager.hasPassword();
+    const loginTitle = document.getElementById('loginTitle');
+    const loginSubtitle = document.getElementById('loginSubtitle');
+    const hintText = document.getElementById('loginHintText');
+
+    if (!hasPw) {
+      if (loginTitle) loginTitle.textContent = 'Registrasi Sandi Admin';
+      if (loginSubtitle) loginSubtitle.textContent = 'Belum ada sandi yang terdaftar. Masukkan username dan buat sandi baru untuk mengamankan akses admin.';
+      if (btnSubmitLogin) {
+        btnSubmitLogin.innerHTML = '<i class="bi bi-shield-plus"></i><span>Buat Sandi & Masuk</span>';
+      }
+      if (hintText) {
+        hintText.textContent = 'Sandi baru (min. 6 karakter) akan dienkripsi dan disimpan di browser ini.';
+      }
+    } else {
+      if (loginTitle) loginTitle.textContent = 'Portal Admin Portofolio';
+      if (loginSubtitle) loginSubtitle.textContent = 'Nurul Ngaeni — Panel Kontrol Konten & Galeri';
+      if (btnSubmitLogin) {
+        btnSubmitLogin.innerHTML = '<i class="bi bi-box-arrow-in-right"></i><span>Masuk ke Panel Admin</span>';
+      }
+      if (hintText) {
+        hintText.textContent = 'Panel admin terproteksi keamanan sandi.';
+      }
+    }
+  }
+
   function showLoginError(msg) {
     if (loginErrorAlert && loginErrorText) {
       loginErrorText.textContent = msg;
@@ -93,7 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appContent) appContent.style.display = 'block';
         populateForm();
         setupPhotoManagement();
-        CMSManager.showToast('Selamat datang di Panel Admin Portofolio Nurul Ngaeni!');
+        if (result.isInitialSetup) {
+          CMSManager.showToast('Sandi admin baru berhasil dibuat dan disimpan untuk browser ini!');
+        } else {
+          CMSManager.showToast('Selamat datang di Panel Admin Portofolio Nurul Ngaeni!');
+        }
       } else {
         showLoginError(result.message || 'Username atau password salah.');
       }
@@ -102,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       if (btnSubmitLogin) {
         btnSubmitLogin.disabled = false;
-        btnSubmitLogin.innerHTML = '<i class="bi bi-box-arrow-in-right"></i><span>Masuk ke Panel Admin</span>';
+        updateLoginUI();
       }
     }
   }
@@ -140,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginPassword) loginPassword.value = '';
         if (appContent) appContent.style.display = 'none';
         if (loginScreen) loginScreen.style.display = 'flex';
+        updateLoginUI();
         CMSManager.showToast('Anda telah keluar dari Panel Admin.');
       }
     });
@@ -649,6 +681,107 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+  // --- Internet Publishing via GitHub Pages API ---
+  const publishModal = document.getElementById('publishInternetModal');
+  const btnPublishInternet = document.getElementById('btnPublishInternet');
+  const btnTriggerModalFromSettings = document.getElementById('btnTriggerModalFromSettings');
+  const btnCancelPublish = document.getElementById('btnCancelPublish');
+  const btnConfirmPublish = document.getElementById('btnConfirmPublish');
+  const ghTokenInput = document.getElementById('ghTokenInput');
+  const toggleGhTokenBtn = document.getElementById('toggleGhTokenBtn');
+  const rememberGhToken = document.getElementById('rememberGhToken');
+  const publishAlertError = document.getElementById('publishAlertError');
+  const publishAlertErrorText = document.getElementById('publishAlertErrorText');
+
+  const GH_TOKEN_KEY = 'nurul_admin_gh_token';
+
+  const showPublishModal = () => {
+    if (!publishModal) return;
+    if (publishAlertError) publishAlertError.style.display = 'none';
+    const savedToken = localStorage.getItem(GH_TOKEN_KEY);
+    if (savedToken && ghTokenInput) {
+      ghTokenInput.value = savedToken;
+    }
+    publishModal.style.display = 'flex';
+    if (ghTokenInput && !savedToken) ghTokenInput.focus();
+  };
+
+  const hidePublishModal = () => {
+    if (publishModal) publishModal.style.display = 'none';
+  };
+
+  if (btnPublishInternet) btnPublishInternet.addEventListener('click', showPublishModal);
+  if (btnTriggerModalFromSettings) btnTriggerModalFromSettings.addEventListener('click', showPublishModal);
+  if (btnCancelPublish) btnCancelPublish.addEventListener('click', hidePublishModal);
+
+  if (toggleGhTokenBtn && ghTokenInput) {
+    toggleGhTokenBtn.addEventListener('click', () => {
+      const isPw = ghTokenInput.type === 'password';
+      ghTokenInput.type = isPw ? 'text' : 'password';
+      toggleGhTokenBtn.innerHTML = isPw ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+    });
+  }
+
+  if (btnConfirmPublish) {
+    btnConfirmPublish.addEventListener('click', async () => {
+      const token = ghTokenInput ? ghTokenInput.value.trim() : '';
+      if (!token) {
+        if (publishAlertError && publishAlertErrorText) {
+          publishAlertErrorText.textContent = 'Silakan masukkan GitHub Personal Access Token.';
+          publishAlertError.style.display = 'flex';
+        }
+        return;
+      }
+
+      // Save form data first to ensure latest edits are captured
+      handleSave();
+
+      btnConfirmPublish.disabled = true;
+      btnConfirmPublish.innerHTML = '<i class="bi bi-arrow-repeat"></i><span>Sedang Mempublikasikan ke GitHub...</span>';
+      if (publishAlertError) publishAlertError.style.display = 'none';
+
+      try {
+        const result = await CMSManager.publishToGitHub(token, 'ngaeninurul74-cell', 'portofolio-nurul-ngaeni', 'gh-pages');
+        if (result.success) {
+          if (rememberGhToken && rememberGhToken.checked) {
+            localStorage.setItem(GH_TOKEN_KEY, token);
+          } else {
+            localStorage.removeItem(GH_TOKEN_KEY);
+          }
+          hidePublishModal();
+          CMSManager.showToast('Sukses! Konten berhasil dipublikasikan langsung ke GitHub Pages (Internet Live)! Website akan live untuk seluruh pengunjung dalam ~30 detik.');
+        }
+      } catch (err) {
+        if (publishAlertError && publishAlertErrorText) {
+          publishAlertErrorText.textContent = err.message || 'Gagal mempublikasikan ke GitHub API. Periksa token dan izin repositori Anda.';
+          publishAlertError.style.display = 'flex';
+        }
+      } finally {
+        btnConfirmPublish.disabled = false;
+        btnConfirmPublish.innerHTML = '<i class="bi bi-send-check-fill"></i><span>Publikasikan Sekarang</span>';
+      }
+    });
+  }
+
+  // Handle Native File Exports for Manual Git Push
+  const btnExportNativeJS = document.getElementById('btnExportNativeJS');
+  const btnExportNativeJSON = document.getElementById('btnExportNativeJSON');
+
+  if (btnExportNativeJS) {
+    btnExportNativeJS.addEventListener('click', () => {
+      CMSManager.exportJS('portfolio-content.js');
+      CMSManager.showToast('Berkas native portfolio-content.js berhasil diunduh!');
+    });
+  }
+
+  if (btnExportNativeJSON) {
+    btnExportNativeJSON.addEventListener('click', () => {
+      CMSManager.exportJSON('portfolio-content.json');
+      CMSManager.showToast('Berkas native portfolio-content.json berhasil diunduh!');
+    });
+  }
+
   // Handle Import JSON
   const importInput = document.getElementById('importJsonInput');
   if (importInput) {
@@ -956,6 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       if (loginScreen) loginScreen.style.display = 'flex';
       if (appContent) appContent.style.display = 'none';
+      updateLoginUI();
     }
   }
 

@@ -112,6 +112,22 @@ body {
   border: 1px solid transparent;
 }
 
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border-color: #34d399;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-gold) 0%, #d97706 100%);
   color: #0b0f19;
@@ -841,6 +857,20 @@ body {
   border-radius: 20px;
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+.badge-photo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+  margin-left: auto;
 }
 
 /* Section Specific Photo Uploader Box */
