@@ -383,7 +383,10 @@ h1, h2, h3, h4, h5, h6 {
 .visual-wrapper {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 540px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 .visual-glow {
@@ -391,10 +394,10 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(10, 14, 23, 0) 70%);
-  filter: blur(40px);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(10, 14, 23, 0) 70%);
+  filter: blur(45px);
   z-index: 1;
 }
 
@@ -402,14 +405,19 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   z-index: 2;
   width: 100%;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform var(--transition-normal);
+  height: auto;
+  max-height: 580px;
+  object-fit: contain;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.6));
+  transition: transform var(--transition-normal), filter var(--transition-normal);
 }
 
 .hero-image:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
+  filter: drop-shadow(0 30px 50px rgba(245, 158, 11, 0.3));
 }
 
 .floating-badge {
@@ -510,9 +518,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
-  gap: 4rem;
+  gap: 3.5rem;
   margin-bottom: 4.5rem;
 }
 
@@ -564,15 +572,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .about-photo-card {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .photo-frame {
   position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--border-light);
-  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%);
+  width: 100%;
+  max-width: 520px;
+  border-radius: 0;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -581,23 +593,29 @@ h1, h2, h3, h4, h5, h6 {
 .about-image {
   width: 100%;
   height: auto;
+  max-height: 600px;
   object-fit: contain;
   display: block;
-  transition: transform var(--transition-normal);
+  border: none !important;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.14));
+  transition: transform var(--transition-normal), filter var(--transition-normal);
 }
 
-.photo-frame:hover .about-image {
-  transform: scale(1.02);
+.about-photo-card:hover .about-image {
+  transform: scale(1.03);
+  filter: drop-shadow(0 25px 45px rgba(245, 158, 11, 0.22));
 }
 
 .photo-overlay-tag {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(8px);
+  bottom: 12px;
+  right: 20px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
   color: #ffffff;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.25rem;
   border-radius: 9999px;
   font-family: var(--font-heading);
   font-size: 0.85rem;
@@ -605,6 +623,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .photo-overlay-tag i {
