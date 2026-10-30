@@ -1,6 +1,17 @@
 /**
  * Nurul Ngaeni Portfolio - CMS Admin Dashboard Logic
- * Handles form population, real-time live-sync, photo management, exporting, importing, and resetting.
+ * Features:
+ * 1. Admin Authentication Gate (Login Screen, Remember Session, Logout, Password Change)
+ * 2. Multi-Content Photo Management across all sections:
+ *    - Profile (Hero, About, Closing)
+ *    - Services (MC, Moderator, Speaker, Modeling)
+ *    - Projects (IKANURA, APIK, Nurova.Style)
+ *    - Achievements (7 awards with certificates / trophies)
+ *    - Quote (Backdrop wallpaper)
+ *    - Gallery (Event documentation photo uploads with categories)
+ * 3. Real-time form synchronization, JSON Export/Import, and Factory Reset
+ * 
+ * Strict Constraint: ZERO EMOJIS - Bootstrap Icons ONLY (bi bi-*)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
     modeling: { label: 'Runway Model', icon: 'bi bi-camera' },
     organizations: { label: 'Organisasi', icon: 'bi bi-people' }
   };
+
+  // DOM Elements - Login & Main App Shell
+  const loginScreen = document.getElementById('adminLoginScreen');
+  const appContent = document.getElementById('adminAppContent');
+  const loginUsername = document.getElementById('loginUsername');
+  const loginPassword = document.getElementById('loginPassword');
+  const loginRememberMe = document.getElementById('loginRememberMe');
+  const btnSubmitLogin = document.getElementById('btnSubmitLogin');
+  const toggleLoginPwBtn = document.getElementById('toggleLoginPwBtn');
+  const loginErrorAlert = document.getElementById('loginErrorAlert');
+  const loginErrorText = document.getElementById('loginErrorText');
+  const btnLogoutAdmin = document.getElementById('btnLogoutAdmin');
 
   // DOM Elements - Tab Switching
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -33,7 +56,140 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Populate Form Fields & Photos from CMS Data
+  // --- Authentication Gate ---
+  function showLoginError(msg) {
+    if (loginErrorAlert && loginErrorText) {
+      loginErrorText.textContent = msg;
+      loginErrorAlert.style.display = 'flex';
+    }
+  }
+
+  function hideLoginError() {
+    if (loginErrorAlert) {
+      loginErrorAlert.style.display = 'none';
+    }
+  }
+
+  async function performLogin() {
+    hideLoginError();
+    const username = loginUsername ? loginUsername.value.trim() : '';
+    const password = loginPassword ? loginPassword.value : '';
+    const remember = loginRememberMe ? loginRememberMe.checked : false;
+
+    if (!username || !password) {
+      showLoginError('Silakan masukkan username dan password.');
+      return;
+    }
+
+    if (btnSubmitLogin) {
+      btnSubmitLogin.disabled = true;
+      btnSubmitLogin.innerHTML = '<i class="bi bi-arrow-repeat"></i><span>Memverifikasi...</span>';
+    }
+
+    try {
+      const result = await CMSManager.login(username, password, remember);
+      if (result.success) {
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (appContent) appContent.style.display = 'block';
+        populateForm();
+        setupPhotoManagement();
+        CMSManager.showToast('Selamat datang di Panel Admin Portofolio Nurul Ngaeni!');
+      } else {
+        showLoginError(result.message || 'Username atau password salah.');
+      }
+    } catch (err) {
+      showLoginError('Terjadi kesalahan saat memproses login.');
+    } finally {
+      if (btnSubmitLogin) {
+        btnSubmitLogin.disabled = false;
+        btnSubmitLogin.innerHTML = '<i class="bi bi-box-arrow-in-right"></i><span>Masuk ke Panel Admin</span>';
+      }
+    }
+  }
+
+  // Toggle Password Visibility
+  if (toggleLoginPwBtn && loginPassword) {
+    toggleLoginPwBtn.addEventListener('click', () => {
+      const isPw = loginPassword.type === 'password';
+      loginPassword.type = isPw ? 'text' : 'password';
+      toggleLoginPwBtn.innerHTML = isPw ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+    });
+  }
+
+  // Bind Login Triggers
+  if (btnSubmitLogin) {
+    btnSubmitLogin.addEventListener('click', performLogin);
+  }
+
+  [loginUsername, loginPassword].forEach(input => {
+    if (input) {
+      input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          performLogin();
+        }
+      });
+    }
+  });
+
+  // Bind Logout
+  if (btnLogoutAdmin) {
+    btnLogoutAdmin.addEventListener('click', () => {
+      const confirmLogout = window.confirm('Apakah Anda yakin ingin keluar dari Panel Admin?');
+      if (confirmLogout) {
+        CMSManager.logout();
+        if (loginPassword) loginPassword.value = '';
+        if (appContent) appContent.style.display = 'none';
+        if (loginScreen) loginScreen.style.display = 'flex';
+        CMSManager.showToast('Anda telah keluar dari Panel Admin.');
+      }
+    });
+  }
+
+  // Bind Change Password
+  const btnSubmitChangePw = document.getElementById('btnSubmitChangePw');
+  if (btnSubmitChangePw) {
+    btnSubmitChangePw.addEventListener('click', async () => {
+      const oldPwInput = document.getElementById('changePwOld');
+      const newPwInput = document.getElementById('changePwNew');
+      const confirmPwInput = document.getElementById('changePwConfirm');
+
+      const oldPw = oldPwInput ? oldPwInput.value : '';
+      const newPw = newPwInput ? newPwInput.value : '';
+      const confirmPw = confirmPwInput ? confirmPwInput.value : '';
+
+      if (!oldPw) {
+        CMSManager.showToast('Silakan masukkan password lama.', 'error');
+        return;
+      }
+      if (!newPw || newPw.length < 6) {
+        CMSManager.showToast('Password baru minimal harus 6 karakter.', 'error');
+        return;
+      }
+      if (newPw !== confirmPw) {
+        CMSManager.showToast('Konfirmasi password baru tidak cocok.', 'error');
+        return;
+      }
+
+      btnSubmitChangePw.disabled = true;
+      try {
+        const res = await CMSManager.changePassword(oldPw, newPw);
+        if (res.success) {
+          CMSManager.showToast(res.message);
+          if (oldPwInput) oldPwInput.value = '';
+          if (newPwInput) newPwInput.value = '';
+          if (confirmPwInput) confirmPwInput.value = '';
+        } else {
+          CMSManager.showToast(res.message, 'error');
+        }
+      } catch (err) {
+        CMSManager.showToast('Gagal mengubah password.', 'error');
+      } finally {
+        btnSubmitChangePw.disabled = false;
+      }
+    });
+  }
+
+  // --- Populate Form Fields & Photos from CMS Data ---
   function populateForm() {
     const data = CMSManager.getData();
     if (!data) return;
@@ -99,18 +255,46 @@ document.addEventListener('DOMContentLoaded', () => {
       setVal('quote_subtext', data.quote.subtext);
       setVal('quote_author', data.quote.author);
       setVal('quote_role', data.quote.role);
+
+      // Quote backdrop wallpaper preview
+      const previewQuoteBg = document.getElementById('preview_quoteBg');
+      const iconQuoteBg = document.getElementById('icon_quoteBg');
+      if (previewQuoteBg && iconQuoteBg) {
+        if (data.quote.bgImage) {
+          previewQuoteBg.src = data.quote.bgImage;
+          previewQuoteBg.style.display = 'block';
+          iconQuoteBg.style.display = 'none';
+        } else {
+          previewQuoteBg.style.display = 'none';
+          iconQuoteBg.style.display = 'block';
+        }
+      }
     }
 
-    // 5. Services
+    // 5. Services & Photos
     if (Array.isArray(data.services)) {
       data.services.forEach((srv, idx) => {
         setVal(`service_${idx}_title`, srv.title);
         setVal(`service_${idx}_badge`, srv.badge || srv.count);
         setVal(`service_${idx}_desc`, srv.desc);
+
+        // Service photo preview
+        const prevImg = document.getElementById(`preview_service_${idx}`);
+        const iconNoImg = document.getElementById(`icon_service_${idx}`);
+        if (prevImg && iconNoImg) {
+          if (srv.image) {
+            prevImg.src = srv.image;
+            prevImg.style.display = 'block';
+            iconNoImg.style.display = 'none';
+          } else {
+            prevImg.style.display = 'none';
+            iconNoImg.style.display = 'block';
+          }
+        }
       });
     }
 
-    // 6. Projects
+    // 6. Projects & Covers
     if (Array.isArray(data.projects)) {
       data.projects.forEach((proj, idx) => {
         setVal(`project_${idx}_title`, proj.title);
@@ -118,21 +302,149 @@ document.addEventListener('DOMContentLoaded', () => {
         setVal(`project_${idx}_subtitle`, proj.subtitle);
         setVal(`project_${idx}_role`, proj.role);
         setVal(`project_${idx}_desc`, proj.description);
+
+        // Project cover preview
+        const prevImg = document.getElementById(`preview_project_${idx}`);
+        if (prevImg) {
+          const cover = proj.image || (proj.images && proj.images[0]) || '';
+          if (cover) {
+            prevImg.src = cover;
+          }
+        }
       });
     }
 
-    // 7. Contact
+    // 7. Achievements & Certificates List
+    renderAchievementsList();
+
+    // 8. Contact
     if (data.contact) {
       setVal('contact_tag', data.contact.tag);
       setVal('contact_title', data.contact.title);
       setVal('contact_subtitle', data.contact.subtitle);
     }
 
-    // 8. Gallery List
+    // 9. Gallery List
     renderGalleryList();
   }
 
-  // Render the gallery photo collection in admin
+  // --- Render Achievements List with Photo Uploaders ---
+  function renderAchievementsList() {
+    const data = CMSManager.getData();
+    const container = document.getElementById('achievementsAdminList');
+    if (!container) return;
+
+    const achievements = Array.isArray(data.achievements) ? data.achievements : [];
+    let html = '';
+
+    achievements.forEach((ach, idx) => {
+      const safeTitle = CMSManager.escapeHtml(ach.title || '');
+      const safeIssuer = CMSManager.escapeHtml(ach.issuer || '');
+      const hasImage = Boolean(ach.image);
+      const safeImage = hasImage ? CMSManager.sanitizeUrl(ach.image) : '';
+      const iconClass = CMSManager.escapeHtml(ach.icon || 'bi bi-trophy');
+
+      html += `
+        <div class="sub-card" data-ach-index="${idx}">
+          <div class="sub-card-header">
+            <span class="sub-card-title">
+              <i class="${iconClass}"></i> Prestasi ${idx + 1}: ${safeTitle}
+            </span>
+          </div>
+
+          <div class="form-grid">
+            <!-- Photo Piagam/Trofi Uploader -->
+            <div class="form-group span-2">
+              <div class="section-photo-card">
+                <div class="section-photo-thumb" style="width: 100px; height: 90px;">
+                  <img id="preview_ach_${idx}" src="${safeImage}" alt="${safeTitle}" style="${hasImage ? 'display: block;' : 'display: none;'}">
+                  <i id="icon_ach_${idx}" class="bi bi-award no-img" style="${hasImage ? 'display: none;' : 'display: block;'}"></i>
+                </div>
+                <div class="section-photo-meta">
+                  <strong>Foto Piagam / Sertifikat / Trofi</strong>
+                  <span>Tampil sebagai thumbnail pada kartu prestasi di landing page.</span>
+                  <div class="section-photo-actions" style="margin-top: 6px;">
+                    <label for="file_ach_${idx}" class="btn btn-primary btn-sm" style="cursor: pointer;">
+                      <i class="bi bi-upload"></i> Unggah Piagam
+                    </label>
+                    <input type="file" id="file_ach_${idx}" class="input-ach-file" data-idx="${idx}" accept="image/*" style="display: none;">
+                    <button type="button" class="btn btn-outline btn-sm btn-reset-ach-img" data-idx="${idx}" title="Kembalikan foto bawaan">
+                      <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ach_${idx}_title">Nama Prestasi / Penghargaan</label>
+              <input type="text" id="ach_${idx}_title" class="form-input" value="${safeTitle}">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ach_${idx}_issuer">Penyelenggara / Kategori & Tahun</label>
+              <input type="text" id="ach_${idx}_issuer" class="form-input" value="${safeIssuer}">
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    // Attach File Upload Handlers for Achievements
+    const achFileInputs = container.querySelectorAll('.input-ach-file');
+    achFileInputs.forEach(input => {
+      input.addEventListener('change', async (e) => {
+        const idx = parseInt(input.getAttribute('data-idx'), 10);
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          CMSManager.showToast('Mengompres dan memproses foto piagam...', 'info');
+          const dataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
+          const previewImg = document.getElementById(`preview_ach_${idx}`);
+          const iconImg = document.getElementById(`icon_ach_${idx}`);
+          if (previewImg && iconImg) {
+            previewImg.src = dataUrl;
+            previewImg.style.display = 'block';
+            iconImg.style.display = 'none';
+          }
+          CMSManager.updateAchievementPhoto(idx, dataUrl);
+          CMSManager.showToast(`Foto piagam prestasi ${idx + 1} berhasil diperbarui!`);
+        } catch (err) {
+          CMSManager.showToast(err.message, 'error');
+        }
+        input.value = '';
+      });
+    });
+
+    // Attach Reset Handlers for Achievements
+    const achResetButtons = container.querySelectorAll('.btn-reset-ach-img');
+    achResetButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-idx'), 10);
+        CMSManager.resetAchievementPhoto(idx);
+        const updated = CMSManager.getData();
+        const previewImg = document.getElementById(`preview_ach_${idx}`);
+        const iconImg = document.getElementById(`icon_ach_${idx}`);
+        if (updated.achievements && updated.achievements[idx]) {
+          const ach = updated.achievements[idx];
+          if (ach.image && previewImg && iconImg) {
+            previewImg.src = ach.image;
+            previewImg.style.display = 'block';
+            iconImg.style.display = 'none';
+          } else if (previewImg && iconImg) {
+            previewImg.style.display = 'none';
+            iconImg.style.display = 'block';
+          }
+        }
+        CMSManager.showToast(`Foto piagam prestasi ${idx + 1} dikembalikan ke versi bawaan.`);
+      });
+    });
+  }
+
+  // --- Render Gallery List ---
   function renderGalleryList() {
     const data = CMSManager.getData();
     const grid = document.getElementById('adminGalleryGrid');
@@ -208,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Collect Current Form Values into structured Data object
+  // --- Collect Current Form Values into Structured Data Object ---
   function collectFormData() {
     const original = CMSManager.getData();
     const data = JSON.parse(JSON.stringify(original));
@@ -229,7 +541,9 @@ document.addEventListener('DOMContentLoaded', () => {
     data.personal.whatsapp = getVal('personal_whatsapp', data.personal.whatsapp);
     data.personal.email = getVal('personal_email', data.personal.email);
     data.personal.linkedin = getVal('personal_linkedin', data.personal.linkedin);
-    data.personal.whatsappLink = `https://wa.me/${data.personal.whatsapp.replace(/[^0-9]/g, '')}`;
+    if (data.personal.whatsapp) {
+      data.personal.whatsappLink = `https://wa.me/${data.personal.whatsapp.replace(/[^0-9]/g, '')}`;
+    }
 
     // 2. About
     if (!data.about) data.about = {};
@@ -279,7 +593,15 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 7. Contact
+    // 7. Achievements Text
+    if (Array.isArray(data.achievements)) {
+      data.achievements.forEach((ach, idx) => {
+        ach.title = getVal(`ach_${idx}_title`, ach.title);
+        ach.issuer = getVal(`ach_${idx}_issuer`, ach.issuer);
+      });
+    }
+
+    // 8. Contact
     if (!data.contact) data.contact = {};
     data.contact.tag = getVal('contact_tag', data.contact.tag);
     data.contact.title = getVal('contact_title', data.contact.title);
@@ -350,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- Photo Upload Handlers ---
+  // --- Photo Management Handlers across All Content Sections ---
   function setupPhotoManagement() {
     // 1. Profile Photos Upload (Hero, About, Closing)
     const handleProfileUpload = (inputId, previewId, photoType) => {
@@ -399,28 +721,175 @@ document.addEventListener('DOMContentLoaded', () => {
     bindResetPhoto('btnResetAboutImg', 'preview_aboutImage', 'aboutImage');
     bindResetPhoto('btnResetClosingImg', 'preview_closingImage', 'closingImage');
 
-    // 2. Add New Gallery Photo
+    // 2. Services Photos Upload (4 services: 0..3)
+    [0, 1, 2, 3].forEach(idx => {
+      const fileInput = document.getElementById(`file_service_${idx}`);
+      const previewImg = document.getElementById(`preview_service_${idx}`);
+      const iconNoImg = document.getElementById(`icon_service_${idx}`);
+      const resetBtn = document.querySelector(`.btn-reset-service-img[data-idx="${idx}"]`);
+
+      if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          try {
+            CMSManager.showToast('Mengompres foto layanan...', 'info');
+            const dataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
+            if (previewImg && iconNoImg) {
+              previewImg.src = dataUrl;
+              previewImg.style.display = 'block';
+              iconNoImg.style.display = 'none';
+            }
+            CMSManager.updateServicePhoto(idx, dataUrl);
+            CMSManager.showToast(`Foto layanan ${idx + 1} berhasil diperbarui!`);
+          } catch (err) {
+            CMSManager.showToast(err.message, 'error');
+          }
+          fileInput.value = '';
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          CMSManager.resetServicePhoto(idx);
+          if (previewImg && iconNoImg) {
+            previewImg.style.display = 'none';
+            iconNoImg.style.display = 'block';
+          }
+          CMSManager.showToast(`Foto layanan ${idx + 1} dihapus.`);
+        });
+      }
+    });
+
+    // 3. Projects Photos Upload (3 projects: 0..2)
+    [0, 1, 2].forEach(idx => {
+      const fileInput = document.getElementById(`file_project_${idx}`);
+      const previewImg = document.getElementById(`preview_project_${idx}`);
+      const resetBtn = document.querySelector(`.btn-reset-project-img[data-idx="${idx}"]`);
+
+      if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          try {
+            CMSManager.showToast('Mengompres foto sampul proyek...', 'info');
+            const dataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
+            if (previewImg) {
+              previewImg.src = dataUrl;
+            }
+            CMSManager.updateProjectPhoto(idx, dataUrl);
+            CMSManager.showToast(`Foto sampul proyek ${idx + 1} berhasil diperbarui!`);
+          } catch (err) {
+            CMSManager.showToast(err.message, 'error');
+          }
+          fileInput.value = '';
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          CMSManager.resetProjectPhoto(idx);
+          const updated = CMSManager.getData();
+          if (previewImg && updated.projects && updated.projects[idx]) {
+            const p = updated.projects[idx];
+            previewImg.src = p.image || (p.images && p.images[0]) || '';
+          }
+          CMSManager.showToast(`Foto sampul proyek ${idx + 1} dikembalikan ke versi bawaan.`);
+        });
+      }
+    });
+
+    // 4. Quote Wallpaper Backdrop Upload
+    const fileQuoteBg = document.getElementById('file_quoteBg');
+    const previewQuoteBg = document.getElementById('preview_quoteBg');
+    const iconQuoteBg = document.getElementById('icon_quoteBg');
+    const btnResetQuoteBg = document.getElementById('btnResetQuoteBg');
+
+    if (fileQuoteBg) {
+      fileQuoteBg.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          CMSManager.showToast('Mengompres foto wallpaper latar...', 'info');
+          const dataUrl = await CMSManager.compressImage(file, 1600, 1200, 0.82);
+          if (previewQuoteBg && iconQuoteBg) {
+            previewQuoteBg.src = dataUrl;
+            previewQuoteBg.style.display = 'block';
+            iconQuoteBg.style.display = 'none';
+          }
+          CMSManager.updateQuoteBg(dataUrl);
+          CMSManager.showToast('Foto latar banner filosofi berhasil diperbarui!');
+        } catch (err) {
+          CMSManager.showToast(err.message, 'error');
+        }
+        fileQuoteBg.value = '';
+      });
+    }
+
+    if (btnResetQuoteBg) {
+      btnResetQuoteBg.addEventListener('click', () => {
+        CMSManager.resetQuoteBg();
+        if (previewQuoteBg && iconQuoteBg) {
+          previewQuoteBg.style.display = 'none';
+          iconQuoteBg.style.display = 'block';
+        }
+        CMSManager.showToast('Foto latar banner filosofi dihapus.');
+      });
+    }
+
+    // 5. Add New Gallery Photo
     const newGalleryFileInput = document.getElementById('newGalleryFile');
+    const galleryDropzone = document.getElementById('galleryDropzone');
     const newPhotoPreviewBox = document.getElementById('newPhotoPreviewBox');
     const newPhotoPreviewImg = document.getElementById('newPhotoPreviewImg');
     const btnAddPhoto = document.getElementById('btnAddPhotoToGallery');
     let selectedGalleryImageDataUrl = null;
 
-    if (newGalleryFileInput) {
-      newGalleryFileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    const processGalleryFile = async (file) => {
+      if (!file) return;
+      try {
+        CMSManager.showToast('Mengoptimalkan pratinjau gambar...', 'info');
+        selectedGalleryImageDataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
+        if (newPhotoPreviewImg && newPhotoPreviewBox) {
+          newPhotoPreviewImg.src = selectedGalleryImageDataUrl;
+          newPhotoPreviewBox.style.display = 'block';
+        }
+      } catch (err) {
+        CMSManager.showToast(err.message, 'error');
+        selectedGalleryImageDataUrl = null;
+      }
+    };
 
-        try {
-          CMSManager.showToast('Mengoptimalkan pratinjau gambar...', 'info');
-          selectedGalleryImageDataUrl = await CMSManager.compressImage(file, 1200, 1200, 0.82);
-          if (newPhotoPreviewImg && newPhotoPreviewBox) {
-            newPhotoPreviewImg.src = selectedGalleryImageDataUrl;
-            newPhotoPreviewBox.style.display = 'block';
-          }
-        } catch (err) {
-          CMSManager.showToast(err.message, 'error');
-          selectedGalleryImageDataUrl = null;
+    if (newGalleryFileInput) {
+      newGalleryFileInput.addEventListener('change', (e) => {
+        processGalleryFile(e.target.files[0]);
+      });
+    }
+
+    if (galleryDropzone) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        galleryDropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          galleryDropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        galleryDropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          galleryDropzone.classList.remove('dragover');
+        });
+      });
+
+      galleryDropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+          processGalleryFile(dt.files[0]);
         }
       });
     }
@@ -476,7 +945,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Initialize
-  populateForm();
-  setupPhotoManagement();
+  // --- Initialize App State ---
+  function init() {
+    const isAuth = CMSManager.isAuthenticated();
+    if (isAuth) {
+      if (loginScreen) loginScreen.style.display = 'none';
+      if (appContent) appContent.style.display = 'block';
+      populateForm();
+      setupPhotoManagement();
+    } else {
+      if (loginScreen) loginScreen.style.display = 'flex';
+      if (appContent) appContent.style.display = 'none';
+    }
+  }
+
+  init();
 });

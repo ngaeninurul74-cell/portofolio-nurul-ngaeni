@@ -1,10 +1,11 @@
 /**
  * Nurul Ngaeni Portfolio CMS & Content Manager
  * Features:
- * 1. Admin Dashboard (admin.html) with structured text & photo manager
- * 2. Visual Inline Quick-Editor directly on the landing page (index.html)
+ * 1. Admin Authentication (SHA-256 password hashing, session management)
+ * 2. Visual Inline Quick-Editor with login protection directly on index.html
  * 3. Photo Upload with automatic Canvas compression (max 1200px, WebP/JPEG)
- * 4. Real-time multi-tab synchronization via localStorage and BroadcastChannel
+ * 4. Multi-content photo management (Profile, Services, Projects, Achievements, Quote, Gallery)
+ * 5. Real-time multi-tab synchronization via localStorage and BroadcastChannel
  */
 
 (function (root, factory) {
@@ -19,6 +20,11 @@
   'use strict';
 
   const STORAGE_KEY = 'nurul_portfolio_data';
+  const AUTH_KEY = 'nurul_admin_auth_state';
+  const PW_HASH_KEY = 'nurul_admin_pw_hash';
+  // Default password: 'nurul2026'
+  const DEFAULT_PW_HASH = '91a27b2d71a8fcad20e20f56b12358bcc708d7ec5c9611777167a3cbb0b85c8d';
+
   const broadcast = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('nurul_cms_sync') : null;
 
   function deepClone(obj) {
@@ -81,9 +87,83 @@
     return '';
   }
 
+  async function computeSha256(str) {
+    const buffer = new TextEncoder().encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   const CMS = {
     escapeHtml: escapeHtml,
     sanitizeUrl: sanitizeUrl,
+
+    // --- Authentication System ---
+    /**
+     * Check if current session is authenticated as admin
+     */
+    isAuthenticated: function () {
+      try {
+        return sessionStorage.getItem(AUTH_KEY) === 'true' || localStorage.getItem(AUTH_KEY) === 'true';
+      } catch (e) {
+        return false;
+      }
+    },
+
+    /**
+     * Authenticate admin with username & password
+     */
+    login: async function (username, password, remember = false) {
+      const u = (username || '').trim().toLowerCase();
+      if (u !== 'admin' && u !== 'nurul' && u !== 'nurulngaeni') {
+        return { success: false, message: 'Username tidak terdaftar.' };
+      }
+
+      const enteredHash = await computeSha256(password || '');
+      const activeHash = localStorage.getItem(PW_HASH_KEY) || DEFAULT_PW_HASH;
+
+      if (enteredHash === activeHash) {
+        sessionStorage.setItem(AUTH_KEY, 'true');
+        if (remember) {
+          localStorage.setItem(AUTH_KEY, 'true');
+        }
+        return { success: true };
+      } else {
+        return { success: false, message: 'Password salah. Silakan coba lagi.' };
+      }
+    },
+
+    /**
+     * Logout admin
+     */
+    logout: function () {
+      try {
+        sessionStorage.removeItem(AUTH_KEY);
+        localStorage.removeItem(AUTH_KEY);
+      } catch (e) {}
+    },
+
+    /**
+     * Change admin password
+     */
+    changePassword: async function (oldPassword, newPassword) {
+      const oldHash = await computeSha256(oldPassword || '');
+      const activeHash = localStorage.getItem(PW_HASH_KEY) || DEFAULT_PW_HASH;
+
+      if (oldHash !== activeHash) {
+        return { success: false, message: 'Password lama salah.' };
+      }
+
+      if (!newPassword || newPassword.length < 6) {
+        return { success: false, message: 'Password baru minimal harus 6 karakter.' };
+      }
+
+      const newHash = await computeSha256(newPassword);
+      localStorage.setItem(PW_HASH_KEY, newHash);
+      return { success: true, message: 'Password admin berhasil diperbarui!' };
+    },
+
+    // --- Image Processing ---
     /**
      * Compress and resize an image file using HTML5 Canvas
      * Keeps images under ~150KB to preserve localStorage quota
@@ -118,7 +198,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Compress to JPEG for high compatibility and small footprint
             const dataUrl = canvas.toDataURL('image/jpeg', quality);
             resolve(dataUrl);
           };
@@ -130,6 +209,7 @@
       });
     },
 
+    // --- Data Storage Operations ---
     /**
      * Get active portfolio data (localStorage or fallback to default)
      */
@@ -157,12 +237,14 @@
         if (broadcast) {
           broadcast.postMessage({ type: 'PORTFOLIO_UPDATED', timestamp: Date.now() });
         }
-        window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: data }));
+        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+          window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: data }));
+        }
         return true;
       } catch (e) {
         console.error('Error saving portfolio data:', e);
         if (e.name === 'QuotaExceededError' || e.code === 22) {
-          alert('Penyimpanan browser penuh. Coba hapus beberapa foto atau kurangi ukuran gambar.');
+          alert('Penyimpanan browser penuh. Coba kurangi foto atau bersihkan cache.');
         }
         return false;
       }
@@ -177,12 +259,106 @@
         if (broadcast) {
           broadcast.postMessage({ type: 'PORTFOLIO_RESET', timestamp: Date.now() });
         }
-        window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: getDefaultData() }));
+        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+          window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: getDefaultData() }));
+        }
         return true;
       } catch (e) {
         console.error('Error resetting portfolio data:', e);
         return false;
       }
+    },
+
+    // --- Photo Management across ALL Content Sections ---
+    /**
+     * Update Service Photo
+     */
+    updateServicePhoto: function (serviceIdx, dataUrl) {
+      const data = this.getData();
+      if (!Array.isArray(data.services) || !data.services[serviceIdx]) return false;
+      data.services[serviceIdx].image = dataUrl;
+      return this.saveData(data);
+    },
+
+    /**
+     * Reset Service Photo
+     */
+    resetServicePhoto: function (serviceIdx) {
+      const data = this.getData();
+      const defaults = getDefaultData();
+      if (data.services && data.services[serviceIdx]) {
+        data.services[serviceIdx].image = (defaults.services && defaults.services[serviceIdx]) ? defaults.services[serviceIdx].image : '';
+        return this.saveData(data);
+      }
+      return false;
+    },
+
+    /**
+     * Update Project Cover Photo
+     */
+    updateProjectPhoto: function (projectIdx, dataUrl) {
+      const data = this.getData();
+      if (!Array.isArray(data.projects) || !data.projects[projectIdx]) return false;
+      data.projects[projectIdx].image = dataUrl;
+      return this.saveData(data);
+    },
+
+    /**
+     * Reset Project Cover Photo
+     */
+    resetProjectPhoto: function (projectIdx) {
+      const data = this.getData();
+      const defaults = getDefaultData();
+      if (data.projects && data.projects[projectIdx]) {
+        data.projects[projectIdx].image = (defaults.projects && defaults.projects[projectIdx]) ? defaults.projects[projectIdx].image : '';
+        return this.saveData(data);
+      }
+      return false;
+    },
+
+    /**
+     * Update Achievement / Award Photo
+     */
+    updateAchievementPhoto: function (achIdx, dataUrl) {
+      const data = this.getData();
+      if (!Array.isArray(data.achievements) || !data.achievements[achIdx]) return false;
+      data.achievements[achIdx].image = dataUrl;
+      return this.saveData(data);
+    },
+
+    /**
+     * Reset Achievement / Award Photo
+     */
+    resetAchievementPhoto: function (achIdx) {
+      const data = this.getData();
+      const defaults = getDefaultData();
+      if (data.achievements && data.achievements[achIdx]) {
+        data.achievements[achIdx].image = (defaults.achievements && defaults.achievements[achIdx]) ? defaults.achievements[achIdx].image : '';
+        return this.saveData(data);
+      }
+      return false;
+    },
+
+    /**
+     * Update Quote Backdrop Photo
+     */
+    updateQuoteBg: function (dataUrl) {
+      const data = this.getData();
+      if (!data.quote) data.quote = {};
+      data.quote.bgImage = dataUrl;
+      return this.saveData(data);
+    },
+
+    /**
+     * Reset Quote Backdrop Photo
+     */
+    resetQuoteBg: function () {
+      const data = this.getData();
+      if (data.quote) {
+        delete data.quote.bgImage;
+        return this.saveData(data);
+      }
+      return false;
     },
 
     /**
@@ -204,7 +380,6 @@
         image: photoObj.image
       };
 
-      // Add to beginning of gallery
       data.gallery.unshift(newPhoto);
       return this.saveData(data);
     },
@@ -274,7 +449,7 @@
     },
 
     /**
-     * Hydrate DOM elements with active CMS data (Text, Stats, Profile Photos, and Gallery)
+     * Hydrate DOM elements with active CMS data (Text, Stats, Photos across sections)
      */
     hydrateLandingPage: function () {
       const data = this.getData();
@@ -368,7 +543,7 @@
         });
       }
 
-      // 4. Services update
+      // 4. Services update (Text & Optional Custom Photos)
       if (Array.isArray(data.services)) {
         const serviceCards = document.querySelectorAll('.services-grid .service-card');
         data.services.forEach((srv, idx) => {
@@ -379,33 +554,94 @@
             if (title) title.textContent = srv.title;
             if (badge) badge.textContent = srv.badge || srv.count;
             if (desc) desc.textContent = srv.desc;
+
+            // Optional service photo banner
+            let photoBox = serviceCards[idx].querySelector('.service-photo-cover');
+            if (srv.image) {
+              const safeSrvImg = sanitizeUrl(srv.image);
+              if (!photoBox) {
+                photoBox = document.createElement('div');
+                photoBox.className = 'service-photo-cover';
+                serviceCards[idx].prepend(photoBox);
+              }
+              photoBox.innerHTML = `<img src="${safeSrvImg}" alt="${escapeHtml(srv.title)}" loading="lazy">`;
+            } else if (photoBox) {
+              photoBox.remove();
+            }
           }
         });
       }
 
-      // 5. Projects update
+      // 5. Quote Background Wallpaper
+      if (data.quote && data.quote.bgImage) {
+        const quoteBackdrop = document.querySelector('.quote-banner .quote-backdrop');
+        if (quoteBackdrop) {
+          const safeBg = sanitizeUrl(data.quote.bgImage);
+          quoteBackdrop.style.backgroundImage = `url("${safeBg}")`;
+          quoteBackdrop.style.backgroundSize = 'cover';
+          quoteBackdrop.style.backgroundPosition = 'center';
+          quoteBackdrop.style.opacity = '0.35';
+        }
+      }
+
+      // 6. Projects update (Text & Cover Photos)
       if (Array.isArray(data.projects)) {
         const projectCards = document.querySelectorAll('.projects-grid .project-card');
         data.projects.forEach((proj, idx) => {
           if (projectCards[idx]) {
-            const cat = projectCards[idx].querySelector('.project-cat');
+            const cat = projectCards[idx].querySelector('.project-tag');
             const title = projectCards[idx].querySelector('.project-title');
-            const sub = projectCards[idx].querySelector('.project-subtitle');
-            const role = projectCards[idx].querySelector('.project-role strong');
             const desc = projectCards[idx].querySelector('.project-desc');
-            if (cat) cat.textContent = proj.category;
+            const role = projectCards[idx].querySelector('.project-role');
+            if (cat && proj.category) cat.textContent = proj.category;
             if (title) title.textContent = proj.title;
-            if (sub) sub.textContent = proj.subtitle;
-            if (role) role.textContent = proj.role;
+            if (role && proj.role) role.textContent = proj.role;
             if (desc) desc.textContent = proj.description;
+
+            // Project Cover photo
+            if (proj.image) {
+              const projImg = projectCards[idx].querySelector('.project-image-box img');
+              const safeProjImg = sanitizeUrl(proj.image);
+              if (projImg && safeProjImg) {
+                projImg.src = safeProjImg;
+                const srcSet = projectCards[idx].querySelector('.project-image-box source');
+                if (srcSet) srcSet.srcset = safeProjImg;
+              }
+            }
           }
         });
       }
 
-      // 6. Dynamic Gallery Hydration
+      // 7. Achievements / Awards Photos
+      if (Array.isArray(data.achievements)) {
+        const awardCards = document.querySelectorAll('.achievements-grid .award-card');
+        data.achievements.forEach((ach, idx) => {
+          if (awardCards[idx]) {
+            const h4 = awardCards[idx].querySelector('h4');
+            const p = awardCards[idx].querySelector('p');
+            if (h4) h4.textContent = ach.title;
+            if (p) p.textContent = ach.issuer;
+
+            // Achievement image preview if uploaded
+            let achThumb = awardCards[idx].querySelector('.award-photo-thumb');
+            if (ach.image) {
+              const safeAchImg = sanitizeUrl(ach.image);
+              if (!achThumb) {
+                achThumb = document.createElement('div');
+                achThumb.className = 'award-photo-thumb';
+                awardCards[idx].prepend(achThumb);
+              }
+              achThumb.innerHTML = `<img src="${safeAchImg}" alt="${escapeHtml(ach.title)}" loading="lazy">`;
+            } else if (achThumb) {
+              achThumb.remove();
+            }
+          }
+        });
+      }
+
+      // 8. Dynamic Gallery Hydration
       const galleryGrid = document.getElementById('galleryGrid');
       if (galleryGrid && Array.isArray(data.gallery) && data.gallery.length > 0) {
-        // Determine active filter
         const activeFilterBtn = document.querySelector('.filter-btn.active');
         const activeFilter = activeFilterBtn ? activeFilterBtn.getAttribute('data-filter') : 'all';
 
@@ -440,7 +676,7 @@
         });
         galleryGrid.innerHTML = html;
 
-        // Re-attach lightbox handlers to dynamically rendered cards
+        // Re-attach lightbox handlers
         const lightboxModal = document.getElementById('lightboxModal');
         const lightboxImage = document.getElementById('lightboxImage');
         const lightboxCaption = document.getElementById('lightboxCaption');
@@ -505,7 +741,7 @@
       iconEl.className = `bi ${icon}`;
       
       const spanEl = document.createElement('span');
-      spanEl.textContent = message; // Safe textContent to prevent DOM XSS
+      spanEl.textContent = message;
 
       toast.appendChild(iconEl);
       toast.appendChild(spanEl);
@@ -522,10 +758,10 @@
     },
 
     /**
-     * Setup inline visual editor directly on index.html
+     * Setup inline visual editor directly on index.html with login prompt
      */
     initInlineEditor: function () {
-      // Create Floating Quick Controls
+      // Floating Controls
       const floatingBar = document.createElement('div');
       floatingBar.id = 'cmsFloatingControls';
       floatingBar.className = 'cms-floating-controls';
@@ -535,7 +771,7 @@
             <i class="bi bi-pencil-square"></i>
             <span>Mode Edit Cepat</span>
           </button>
-          <a href="admin.html" class="cms-action-btn admin-link-btn" title="Buka Panel CMS Lengkap">
+          <a href="admin.html" class="cms-action-btn admin-link-btn" title="Buka Panel CMS Lengkap" target="_blank" rel="noopener noreferrer">
             <i class="bi bi-sliders"></i>
             <span>Panel Admin (CMS)</span>
           </a>
@@ -543,7 +779,7 @@
       `;
       document.body.appendChild(floatingBar);
 
-      // Create Top Floating Banner for Active Edit Mode
+      // Top Banner
       const topBanner = document.createElement('div');
       topBanner.id = 'cmsEditorBanner';
       topBanner.className = 'cms-editor-banner';
@@ -567,6 +803,30 @@
         </div>
       `;
       document.body.appendChild(topBanner);
+
+      // Password Modal for Inline Edit
+      const pwModal = document.createElement('div');
+      pwModal.id = 'inlineAuthModal';
+      pwModal.className = 'cms-modal-overlay';
+      pwModal.style.display = 'none';
+      pwModal.innerHTML = `
+        <div class="cms-modal-card">
+          <div class="cms-modal-header">
+            <div class="modal-icon-box"><i class="bi bi-shield-lock-fill"></i></div>
+            <h3>Autentikasi Admin</h3>
+            <p>Masukkan password admin untuk mengaktifkan mode edit langsung.</p>
+          </div>
+          <div class="cms-modal-body">
+            <input type="password" id="inlineAdminPwInput" class="form-input" placeholder="Password Admin (Default: nurul2026)">
+            <div id="inlinePwError" style="color: #ef4444; font-size: 0.8rem; margin-top: 6px; display: none;">Password salah.</div>
+          </div>
+          <div class="cms-modal-footer">
+            <button type="button" id="btnCancelInlineAuth" class="btn btn-outline">Batal</button>
+            <button type="button" id="btnSubmitInlineAuth" class="btn btn-primary"><i class="bi bi-check2-circle"></i> Verifikasi</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(pwModal);
 
       let isEditing = false;
       const toggleBtn = document.getElementById('cmsToggleEditBtn');
@@ -599,7 +859,55 @@
 
       if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-          setInlineEditMode(!isEditing);
+          if (isEditing) {
+            setInlineEditMode(false);
+          } else {
+            // Check auth
+            if (CMS.isAuthenticated()) {
+              setInlineEditMode(true);
+            } else {
+              // Show prompt modal
+              pwModal.style.display = 'flex';
+              const input = document.getElementById('inlineAdminPwInput');
+              if (input) {
+                input.value = '';
+                input.focus();
+              }
+            }
+          }
+        });
+      }
+
+      const cancelAuthBtn = document.getElementById('btnCancelInlineAuth');
+      if (cancelAuthBtn) {
+        cancelAuthBtn.addEventListener('click', () => {
+          pwModal.style.display = 'none';
+        });
+      }
+
+      const submitAuthBtn = document.getElementById('btnSubmitInlineAuth');
+      const pwInput = document.getElementById('inlineAdminPwInput');
+      const errBox = document.getElementById('inlinePwError');
+
+      const verifyInlineLogin = async () => {
+        const val = pwInput ? pwInput.value : '';
+        const res = await CMS.login('admin', val, false);
+        if (res.success) {
+          if (errBox) errBox.style.display = 'none';
+          pwModal.style.display = 'none';
+          setInlineEditMode(true);
+        } else {
+          if (errBox) {
+            errBox.style.display = 'block';
+            errBox.textContent = res.message;
+          }
+        }
+      };
+
+      if (submitAuthBtn) submitAuthBtn.addEventListener('click', verifyInlineLogin);
+      if (pwInput) {
+        pwInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') verifyInlineLogin();
         });
       }
 

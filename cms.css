@@ -253,3 +253,112 @@
     justify-content: flex-end;
   }
 }
+
+/* --- Inline Auth Modal --- */
+.cms-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: rgba(11, 15, 25, 0.85);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.cms-modal-card {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cms-modal-header .modal-icon-box {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #f59e0b;
+}
+
+.cms-modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.cms-modal-header p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.cms-modal-body .form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.cms-modal-body .form-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.cms-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Service Photo Cover on Landing Page */
+.service-photo-cover {
+  width: 100%;
+  height: 140px;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.service-photo-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Award Photo Thumbnail on Landing Page */
+.award-photo-thumb {
+  width: 100%;
+  height: 110px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.award-photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
