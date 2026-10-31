@@ -1,0 +1,423 @@
+{
+  "personal": {
+    "name": "Nurul Ngaeni",
+    "nickname": "Nurul",
+    "badge": "Professional MC & Speaker",
+    "headline": "Dynamic Communicator, Event Host & Marketing Strategist",
+    "subheadline": "Mahasiswa S1 Manajemen Universitas Negeri Yogyakarta yang adaptif dan komunikatif, mengombinasikan keahlian public speaking, pengelolaan acara profesional, serta strategi pemasaran digital untuk menciptakan interaksi yang berdampak.",
+    "location": "Klaten & Yogyakarta",
+    "campus": "Universitas Negeri Yogyakarta",
+    "email": "nurulngaeni.2024@student.uny.ac.id",
+    "whatsapp": "+62 8571 2314 820",
+    "whatsappLink": "https://wa.me/6285712314820",
+    "linkedin": "https://id.linkedin.com/in/nurul-ngaeni-608187320",
+    "heroImage": "landing_page_assets/hero/hero-nurul-cover.png",
+    "heroImageWebp": "landing_page_assets/hero/hero-nurul-cover.webp",
+    "aboutImage": "landing_page_assets/about/profile-formal.png",
+    "aboutImageWebp": "landing_page_assets/about/profile-formal.webp",
+    "closingImage": "landing_page_assets/hero/hero-nurul-closing.png",
+    "closingImageWebp": "landing_page_assets/hero/hero-nurul-closing.webp",
+    "floatingBadgeValue": "40+ Acara",
+    "floatingBadgeLabel": "Terselenggara Sukses"
+  },
+  "partners": {
+    "title": "DIPERCAYA & BERKOLABORASI:",
+    "items": [
+      {
+        "name": "Universitas Negeri Yogyakarta",
+        "icon": "bi bi-bank"
+      },
+      {
+        "name": "Pemkab Klaten",
+        "icon": "bi bi-building"
+      },
+      {
+        "name": "PPK Ormawa Kemdikbudristek",
+        "icon": "bi bi-award"
+      },
+      {
+        "name": "TiketHub Indonesia",
+        "icon": "bi bi-ticket-perforated"
+      },
+      {
+        "name": "Klaten Fashion Festival",
+        "icon": "bi bi-palette"
+      },
+      {
+        "name": "SMKN 1 Klaten",
+        "icon": "bi bi-mortarboard"
+      }
+    ]
+  },
+  "about": {
+    "tag": "TENTANG SAYA",
+    "headline": "Make Something Different.",
+    "text": "Saya berdedikasi dalam bidang komunikasi publik, manajemen acara, dan pemasaran digital. Berbekal pengalaman intensif memandu lebih dari 40 acara dan berbagi ilmu sebagai guru tamu serta narasumber di berbagai institusi, saya meyakini bahwa komunikasi yang efektif adalah kunci membangun koneksi yang kuat antara ide, panggung, dan audiens.",
+    "formalPhotoTag": "Nurul Ngaeni, S.M (Cand.)",
+    "cards": [
+      {
+        "id": "card-1",
+        "title": "Komunikasi Interaktif",
+        "desc": "Menghidupkan suasana acara dengan pembawaan hangat, runtut, dan persuasif.",
+        "icon": "bi bi-chat-heart"
+      },
+      {
+        "id": "card-2",
+        "title": "Manajemen Acara Strategis",
+        "desc": "Memahami alur teknis panggung, koordinasi panitia, dan mitigasi situasi lapangan.",
+        "icon": "bi bi-diagram-3"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": "40+",
+      "label": "Acara MC & Host",
+      "desc": "Expo UMKM, Karnaval, Festival & Formal",
+      "icon": "bi bi-mic-fill"
+    },
+    {
+      "value": "25+",
+      "label": "Sesi Pemateri",
+      "desc": "Marketing, Broadcasting & Kepemimpinan",
+      "icon": "bi bi-megaphone-fill"
+    },
+    {
+      "value": "15+",
+      "label": "Organisasi",
+      "desc": "Kepemudaan, Duta Humas & Kemahasiswaan",
+      "icon": "bi bi-people-fill"
+    },
+    {
+      "value": "8+",
+      "label": "Prestasi & Penghargaan",
+      "desc": "Lulusan Terbaik & Juara 1 LKS Marketing",
+      "icon": "bi bi-trophy-fill"
+    }
+  ],
+  "quote": {
+    "mark": "bi bi-quote",
+    "headline": "KOMUNIKASI BERMAKNA MENCIPTAKAN DAMPAK NYATA",
+    "subtext": "Menghubungkan gagasan, menggerakkan audiens, dan menginspirasi perubahan positif melalui integritas, kolaborasi, dan dedikasi berkelanjutan.",
+    "author": "Nurul Ngaeni",
+    "role": "Public Speaker & Marketing Student"
+  },
+  "services": [
+    {
+      "id": "mc",
+      "title": "Master of Ceremony (MC)",
+      "badge": "40+ Event",
+      "desc": "Memandu rangkaian agenda formal kenegaraan, perayaan budaya, seminar akademik, serta konser dan pameran kreatif dengan penguasaan panggung yang dinamis dan terstruktur.",
+      "icon": "bi bi-mic",
+      "checklist": [
+        "Acara Formal, Protokoler & Kenegaraan",
+        "Festival Budaya & Karnaval Daerah",
+        "Expo UMKM & Acara Bisnis"
+      ]
+    },
+    {
+      "id": "moderator",
+      "title": "Moderator Diskusi & Talkshow",
+      "badge": "15+ Sesi",
+      "desc": "Memandu jalannya diskusi interaktif bersama narasumber kredibel, akademisi, dan pejabat pemerintahan untuk menciptakan dialog yang tajam, edukatif, dan menarik.",
+      "icon": "bi bi-chat-square-quote",
+      "checklist": [
+        "Talkshow Kewirausahaan & Bisnis",
+        "Seminar Akademik & Keuangan",
+        "Diskusi Kebijakan & Pemuda"
+      ]
+    },
+    {
+      "id": "speaker",
+      "title": "Narasumber & Guru Tamu",
+      "badge": "25+ Pertemuan",
+      "desc": "Menyampaikan materi praktis seputar komunikasi digital, strategi branding, broadcasting, dan kepemimpinan untuk siswa SMK, mahasiswa, dan komunitas pemuda.",
+      "icon": "bi bi-mortarboard",
+      "checklist": [
+        "Pelatihan Marketing & Branding",
+        "Workshop Broadcasting & MC",
+        "Latihan Dasar Kepemimpinan (LDKS)"
+      ]
+    },
+    {
+      "id": "modeling",
+      "title": "Muse & Brand Representative",
+      "badge": "7+ Runway",
+      "desc": "Menjadi representasi visual busana daerah, duta pariwisata, dan model runway dalam ajang festival kebudayaan dan promosi kreatif daerah.",
+      "icon": "bi bi-camera",
+      "checklist": [
+        "Klaten Fashion Festival",
+        "Klaten Lurik Karnival",
+        "Duta Anggota KOPMA UNY"
+      ]
+    }
+  ],
+  "gallery": [
+    {
+      "id": "mc-1",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC UMKM Expo by TiketHub",
+      "desc": "Memandu expo pameran pelaku ekonomi kreatif dan UMKM lokal.",
+      "image": "landing_page_assets/mc/mc-umkm-expo-tikethub.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-umkm-expo-tikethub.webp"
+    },
+    {
+      "id": "mc-2",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC Karnaval Budaya Desa Trucuk",
+      "desc": "Pemandu utama perayaan pawai budaya masyarakat Desa Trucuk.",
+      "image": "landing_page_assets/mc/mc-karnaval-budaya-trucuk.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-karnaval-budaya-trucuk.webp"
+    },
+    {
+      "id": "mc-3",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC FEB Berprestasi 2025",
+      "desc": "Agenda tahunan apresiasi insan berprestasi FEB UNY.",
+      "image": "landing_page_assets/mc/mc-feb-berprestasi-uny.jpg",
+      "imageWebp": "landing_page_assets/mc/mc-feb-berprestasi-uny.webp"
+    },
+    {
+      "id": "mc-4",
+      "category": "mc",
+      "categoryLabel": "MC Event",
+      "categoryIcon": "bi bi-mic",
+      "title": "MC Joho Morfosis",
+      "desc": "Acara kolaboratif kepemudaan dan regenerasi komunitas Joho.",
+      "image": "landing_page_assets/mc/mc-joho-morfosis.png",
+      "imageWebp": "landing_page_assets/mc/mc-joho-morfosis.webp"
+    },
+    {
+      "id": "mod-1",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Merti Desa bersama Bupati Klaten",
+      "desc": "Memandu diskusi kebudayaan dan pembangunan desa bersama pimpinan daerah.",
+      "image": "landing_page_assets/moderator/mod-merti-desa-bupati.png",
+      "imageWebp": "landing_page_assets/moderator/mod-merti-desa-bupati.webp"
+    },
+    {
+      "id": "mod-2",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Talkshow Kewirausahaan",
+      "desc": "Menggali strategi inovasi bisnis generasi muda bersama praktisi industri.",
+      "image": "landing_page_assets/moderator/mod-talkshow-kewirausahaan.png",
+      "imageWebp": "landing_page_assets/moderator/mod-talkshow-kewirausahaan.webp"
+    },
+    {
+      "id": "mod-3",
+      "category": "moderator",
+      "categoryLabel": "Moderator",
+      "categoryIcon": "bi bi-chat-square-quote",
+      "title": "Moderator FEB Berprestasi",
+      "desc": "Sesi dialog inspiratif mahasiswa berprestasi dan dosen pembina.",
+      "image": "landing_page_assets/moderator/mod-feb-berprestasi.png",
+      "imageWebp": "landing_page_assets/moderator/mod-feb-berprestasi.webp"
+    },
+    {
+      "id": "spk-1",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Guru Tamu Bidang Marketing",
+      "desc": "Pembelajaran strategi penjualan dan promosi untuk 64 siswa SMKN 1 Jogonalan.",
+      "image": "landing_page_assets/speaker/speaker-guru-tamu-marketing.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-guru-tamu-marketing.webp"
+    },
+    {
+      "id": "spk-2",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Guru Tamu Broadcasting",
+      "desc": "Praktik vocal clarity dan penyiaran di SMKN 1 Klaten.",
+      "image": "landing_page_assets/speaker/speaker-guru-tamu-broadcasting.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-guru-tamu-broadcasting.webp"
+    },
+    {
+      "id": "spk-3",
+      "category": "speaker",
+      "categoryLabel": "Narasumber",
+      "categoryIcon": "bi bi-mortarboard",
+      "title": "Narasumber LDKS (520 Siswa)",
+      "desc": "Pembekalan kepemimpinan dan manajemen organisasi SMKN 2 Klaten.",
+      "image": "landing_page_assets/speaker/speaker-ldks-smkn2-klaten.png",
+      "imageWebp": "landing_page_assets/speaker/speaker-ldks-smkn2-klaten.webp"
+    },
+    {
+      "id": "modl-1",
+      "category": "modeling",
+      "categoryLabel": "Runway Model",
+      "categoryIcon": "bi bi-camera",
+      "title": "Klaten Fashion Festival",
+      "desc": "Representasi busana desainer lokal pada panggung KFF.",
+      "image": "landing_page_assets/modeling/model-klaten-fashion-festival.png",
+      "imageWebp": "landing_page_assets/modeling/model-klaten-fashion-festival.webp"
+    },
+    {
+      "id": "modl-2",
+      "category": "modeling",
+      "categoryLabel": "Runway Model",
+      "categoryIcon": "bi bi-camera",
+      "title": "Klaten Lurik Karnival",
+      "desc": "Mempromosikan warisan wastra lurik khas Kabupaten Klaten.",
+      "image": "landing_page_assets/modeling/model-klaten-lurik-karnival.png",
+      "imageWebp": "landing_page_assets/modeling/model-klaten-lurik-karnival.webp"
+    },
+    {
+      "id": "org-1",
+      "category": "organizations",
+      "categoryLabel": "Organisasi",
+      "categoryIcon": "bi bi-people",
+      "title": "Dewan Kerja Cabang Klaten",
+      "desc": "Ketua Bidang Pembinaan & Pengembangan Pramuka Penegak/Pandega.",
+      "image": "landing_page_assets/organizations/org-dewan-kerja-cabang.jpg",
+      "imageWebp": "landing_page_assets/organizations/org-dewan-kerja-cabang.webp"
+    },
+    {
+      "id": "org-2",
+      "category": "organizations",
+      "categoryLabel": "Duta",
+      "categoryIcon": "bi bi-shield-check",
+      "title": "Duta Anti-Bullying",
+      "desc": "Sekretaris 1 dalam sosialisasi lingkungan sekolah ramah anak.",
+      "image": "landing_page_assets/organizations/org-duta-anti-bullying.jpg",
+      "imageWebp": "landing_page_assets/organizations/org-duta-anti-bullying.webp"
+    }
+  ],
+  "projects": [
+    {
+      "title": "SEGARA untuk IKANURA",
+      "tag": "PPK Ormawa",
+      "tagIcon": "bi bi-water",
+      "role": "Humas & Ketua Segara Raya (Selesai Abdidaya)",
+      "roleIcon": "bi bi-person-check",
+      "desc": "Program pemberdayaan masyarakat berbasis perikanan air tawar di Kalurahan Sidoagung, Sleman. Berfokus pada penciptaan produk bernilai tambah, adopsi teknologi digital, serta kolaborasi pemangku kepentingan.",
+      "status": "Tuntas Abdidaya",
+      "statusIcon": "bi bi-check-circle-fill",
+      "image": "landing_page_assets/projects/project-ikanura-cover.png",
+      "imageWebp": "landing_page_assets/projects/project-ikanura-cover.webp"
+    },
+    {
+      "title": "Ayo Piknik Klaten (APIK)",
+      "tag": "Pariwisata Daerah",
+      "tagIcon": "bi bi-geo-alt",
+      "role": "Admin 1 & Media Planner",
+      "roleIcon": "bi bi-camera-video",
+      "desc": "Platform komunikasi pariwisata yang mengabarkan pesona destinasi, kebudayaan luhur, dan kuliner khas Kabupaten Klaten melalui konten media sosial yang interaktif dan edukatif.",
+      "status": "Komunikasi Publik",
+      "statusIcon": "bi bi-broadcast",
+      "image": "landing_page_assets/projects/project-apik-hero-landscape.jpg",
+      "imageWebp": "landing_page_assets/projects/project-apik-hero-landscape.webp"
+    },
+    {
+      "title": "Nurova.Style & Klathi Souvenir",
+      "tag": "Brand Bisnis",
+      "tagIcon": "bi bi-bag-check",
+      "role": "Founder & Owner",
+      "roleIcon": "bi bi-stars",
+      "desc": "Rintisan usaha mandiri berfokus pada modest fashion muslimah (Nurova.Style) dan suvenir khas daerah (Klathi Souvenir), mengaplikasikan konsep branding dan digital marketing secara langsung.",
+      "status": "Usaha Aktif",
+      "statusIcon": "bi bi-shop",
+      "image": "landing_page_assets/projects/business-nurova-style.png",
+      "imageWebp": "landing_page_assets/projects/business-nurova-style.webp"
+    }
+  ],
+  "achievements": [
+    {
+      "year": "2024",
+      "title": "Siswa Lulusan Terbaik 1",
+      "subtitle": "SMKN 1 Jogonalan",
+      "icon": "bi bi-mortarboard-fill",
+      "featured": false
+    },
+    {
+      "year": "2024",
+      "title": "Juara 1 LKS Bidang Marketing",
+      "subtitle": "Lomba Kompetensi Siswa Tingkat Wilayah",
+      "icon": "bi bi-trophy-fill",
+      "featured": true
+    },
+    {
+      "year": "2025",
+      "title": "Mbak Klaten Intelegensi",
+      "subtitle": "Pemilihan Mas & Mbak Duta Wisata Klaten",
+      "icon": "bi bi-star-fill",
+      "featured": false
+    },
+    {
+      "year": "2025",
+      "title": "Juara 1 BMC TalkShow",
+      "subtitle": "Kompetisi Bisnis Model Kanvas Kewirausahaan",
+      "icon": "bi bi-award-fill",
+      "featured": false
+    },
+    {
+      "year": "2023",
+      "title": "Duta Humas Jawa Tengah",
+      "subtitle": "Apresiasi Humas Kepemudaan Daerah",
+      "icon": "bi bi-person-badge-fill",
+      "featured": false
+    },
+    {
+      "year": "2026",
+      "title": "Mahasiswa Berprestasi",
+      "subtitle": "Universitas Negeri Yogyakarta",
+      "icon": "bi bi-patch-check-fill",
+      "featured": false
+    },
+    {
+      "year": "2026",
+      "title": "Juara 2 Abdidaya PPKO",
+      "subtitle": "KSI Mist FMIPA UNY",
+      "icon": "bi bi-diagram-3-fill",
+      "featured": false
+    }
+  ],
+  "values": [
+    {
+      "title": "Integrity",
+      "desc": "Menjaga kejujuran, tanggung jawab, dan akurasi informasi dalam setiap tugas.",
+      "icon": "bi bi-shield-check"
+    },
+    {
+      "title": "Collaboration",
+      "desc": "Menghargai kerja sama terbuka dan kontribusi setiap elemen tim kerja.",
+      "icon": "bi bi-hand-thumbs-up"
+    },
+    {
+      "title": "Continuous Learning",
+      "desc": "Terbuka terhadap masukan untuk terus mengembangkan kemampuan profesional.",
+      "icon": "bi bi-book"
+    },
+    {
+      "title": "Adaptability",
+      "desc": "Cepat menyesuaikan dengan karakter audiens dan dinamika lingkungan panggung.",
+      "icon": "bi bi-arrow-repeat"
+    },
+    {
+      "title": "Impact Orientation",
+      "desc": "Mengarahkan setiap kegiatan agar memberi faedah nyata bagi semua pihak.",
+      "icon": "bi bi-bullseye"
+    }
+  ],
+  "contact": {
+    "tag": "KOLABORASI & BOOKING",
+    "title": "Let's Connect & Create Impact",
+    "subtitle": "Terbuka terhadap kolaborasi acara sebagai Master of Ceremony (MC), Moderator seminar, pemateri sharing session, program kepemudaan, serta proyek manajemen pemasaran."
+  },
+  "footer": {
+    "brandName": "Nurul Ngaeni",
+    "tagline": "Management Student | Professional MC | Public Speaker",
+    "copyright": "© 2026 Nurul Ngaeni. Seluruh Hak Cipta Dilindungi."
+  }
+}

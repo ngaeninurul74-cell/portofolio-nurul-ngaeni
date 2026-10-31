@@ -1,0 +1,17 @@
+---
+// src/components/Partners.astro
+import { partners } from '../data/portfolioData';
+---
+
+<section class="partners-section">
+  <div class="container partners-container">
+    <span class="partners-title">{partners.title}</span>
+    <div class="partners-grid">
+      {partners.items.map((item) => (
+        <div class="partner-badge">
+          <i class={item.icon}></i> {item.name}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

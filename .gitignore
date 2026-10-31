@@ -1,12 +1,26 @@
-# Logs & temporary files
-node_modules/
+# Build output
 dist/
-.DS_Store
-Thumbs.db
+.astro/
+.taste-skill/
+
+# Dependencies
+node_modules/
+
+# Logs & temporary files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 *.tmp
 *.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-# Heavy archives & raw PDF (kept on local drive only, not pushed to GitHub)
+# Heavy archives & raw documents (local only)
+*.pdf
 PORTOFOLIO NURUL NGAENI.pdf
 foto_portofolio/
 halaman_portofolio/
+scratch/

@@ -1,0 +1,67 @@
+---
+// src/components/Hero.astro
+import { personal } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<section class="hero-section" id="hero">
+  <div class="container hero-container">
+    <div class="hero-content">
+      <div class="hero-identity">
+        <span class="hero-badge">{personal.badge}</span>
+      </div>
+
+      <h1 class="hero-title">
+        Dynamic <span class="highlight-text">Communicator</span>, Event Host & Marketing Strategist
+      </h1>
+      <div class="hero-accent-bar"></div>
+      <p class="hero-description">
+        {personal.subheadline}
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#contact" class="btn btn-primary btn-lg">
+          <i class="bi bi-calendar2-check"></i>
+          <span>Book Nurul</span>
+        </a>
+        <a href="#gallery" class="btn btn-secondary btn-lg">
+          <i class="bi bi-images"></i>
+          <span>Lihat Galeri Acara</span>
+        </a>
+      </div>
+
+      <div class="hero-meta-row">
+        <div class="meta-item">
+          <i class="bi bi-geo-alt-fill"></i>
+          <span>{personal.location}</span>
+        </div>
+        <div class="meta-item">
+          <i class="bi bi-mortarboard-fill"></i>
+          <span>{personal.campus}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="visual-wrapper">
+        <picture>
+          <source srcset={`${base}${personal.heroImageWebp}`} type="image/webp" />
+          <img
+            src={`${base}${personal.heroImage}`}
+            alt={`${personal.name} - ${personal.badge}`}
+            class="hero-image"
+            id="heroImage"
+          />
+        </picture>
+        <div class="floating-badge">
+          <i class="bi bi-award-fill"></i>
+          <div>
+            <strong>{personal.floatingBadgeValue}</strong>
+            <span>{personal.floatingBadgeLabel}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

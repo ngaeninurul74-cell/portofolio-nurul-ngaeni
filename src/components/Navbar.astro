@@ -1,0 +1,37 @@
+---
+// src/components/Navbar.astro
+import { personal } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<header class="site-header">
+  <div class="container header-container">
+    <a href={`${base}`} class="header-logo" aria-label="Beranda Nurul Ngaeni">
+      <span class="logo-mark">N</span>
+      <span class="logo-text">{personal.name}</span>
+    </a>
+
+    <nav class="nav-menu" id="navMenu" aria-label="Menu Utama">
+      <ul class="nav-list">
+        <li><a href="#hero" class="nav-link active">Beranda</a></li>
+        <li><a href="#about" class="nav-link">Tentang</a></li>
+        <li><a href="#services" class="nav-link">Layanan</a></li>
+        <li><a href="#gallery" class="nav-link">Galeri</a></li>
+        <li><a href="#projects" class="nav-link">Proyek</a></li>
+        <li><a href="#achievements" class="nav-link">Prestasi</a></li>
+        <li><a href="#contact" class="nav-link">Kontak</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="#contact" class="btn btn-primary btn-sm">
+        <i class="bi bi-calendar2-check"></i>
+        <span>Book Nurul</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Buka menu navigasi" aria-expanded="false">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,27 @@
+---
+// src/components/Achievements.astro
+import { achievements } from '../data/portfolioData';
+---
+
+<section class="achievements-section" id="achievements">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-tag">APRESIASI & PRESTASI</span>
+      <h2 class="section-title">Rekam Jejak Keberhasilan</h2>
+      <p class="section-desc">
+        Pengakuan atas dedikasi akademik, kompetensi pemasaran, dan kontribusi kepemudaan.
+      </p>
+    </div>
+
+    <div class="achievements-grid">
+      {achievements.map((item) => (
+        <div class={`award-card ${item.featured ? 'featured' : ''}`}>
+          <div class="award-icon"><i class={item.icon}></i></div>
+          <span class="award-year">{item.year}</span>
+          <h3>{item.title}</h3>
+          <p>{item.subtitle}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

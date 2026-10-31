@@ -1,0 +1,66 @@
+---
+// src/components/Contact.astro
+import { contact, personal } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="contact-card">
+      <div class="contact-content">
+        <span class="section-tag light">{contact.tag}</span>
+        <h2 class="contact-title">{contact.title}</h2>
+        <p class="contact-subtitle">{contact.subtitle}</p>
+
+        <div class="contact-links-list">
+          <a
+            href={personal.whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link-item"
+          >
+            <div class="icon-circle"><i class="bi bi-whatsapp"></i></div>
+            <div>
+              <span class="item-label">WhatsApp Direct</span>
+              <strong>{personal.whatsapp}</strong>
+            </div>
+          </a>
+
+          <a href={`mailto:${personal.email}`} class="contact-link-item">
+            <div class="icon-circle"><i class="bi bi-envelope-at"></i></div>
+            <div>
+              <span class="item-label">Email Akademik / Bisnis</span>
+              <strong>{personal.email}</strong>
+            </div>
+          </a>
+
+          <a
+            href={personal.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link-item"
+          >
+            <div class="icon-circle"><i class="bi bi-linkedin"></i></div>
+            <div>
+              <span class="item-label">Profil LinkedIn</span>
+              <strong>linkedin.com/in/nurul-ngaeni</strong>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-photo-side">
+        <picture>
+          <source srcset={`${base}${personal.closingImageWebp}`} type="image/webp" />
+          <img
+            src={`${base}${personal.closingImage}`}
+            alt={`${personal.name} - Hubungi Saya`}
+            class="closing-photo"
+            id="closingImage"
+          />
+        </picture>
+      </div>
+    </div>
+  </div>
+</section>

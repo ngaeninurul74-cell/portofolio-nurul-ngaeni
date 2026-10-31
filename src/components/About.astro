@@ -1,0 +1,72 @@
+---
+// src/components/About.astro
+import { about, stats, personal } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-info">
+        <span class="section-tag">{about.tag}</span>
+        <h2 class="section-title">
+          Make Something <span class="highlight-line">Different.</span>
+        </h2>
+        <div class="about-accent-bar"></div>
+        <p class="about-text">
+          {about.text}
+        </p>
+
+        <div class="about-cards-list">
+          {about.cards.map((card) => (
+            <div class="about-card-item">
+              <div class="card-icon"><i class={card.icon}></i></div>
+              <div class="card-text">
+                <h3>{card.title}</h3>
+                <p>{card.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="about-action">
+          <a href="#services" class="btn btn-outline">
+            <span>Jelajahi Layanan</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="about-photo-card">
+        <div class="photo-frame">
+          <picture>
+            <source srcset={`${base}${personal.aboutImageWebp}`} type="image/webp" />
+            <img
+              src={`${base}${personal.aboutImage}`}
+              alt={`Profil Formal ${personal.name}`}
+              class="about-image"
+              id="aboutImage"
+            />
+          </picture>
+          <div class="photo-overlay-tag">
+            <i class="bi bi-person-badge"></i>
+            <span>{about.formalPhotoTag}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Stats Counter -->
+    <div class="stats-counter-bar">
+      {stats.map((stat) => (
+        <div class="stat-box">
+          <div class="stat-icon"><i class={stat.icon}></i></div>
+          <div class="stat-number">{stat.value}</div>
+          <div class="stat-title">{stat.label}</div>
+          <p class="stat-sub">{stat.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

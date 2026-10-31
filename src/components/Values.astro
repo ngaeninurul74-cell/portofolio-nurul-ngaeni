@@ -1,0 +1,23 @@
+---
+// src/components/Values.astro
+import { values } from '../data/portfolioData';
+---
+
+<section class="values-section">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-tag">PRINSIP KERJA</span>
+      <h2 class="section-title">Nilai-Nilai Profesional</h2>
+    </div>
+
+    <div class="values-grid">
+      {values.map((val) => (
+        <div class="value-item">
+          <i class={val.icon}></i>
+          <h3>{val.title}</h3>
+          <p>{val.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

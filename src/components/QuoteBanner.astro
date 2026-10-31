@@ -1,0 +1,21 @@
+---
+// src/components/QuoteBanner.astro
+import { quote } from '../data/portfolioData';
+---
+
+<section class="quote-banner">
+  <div class="quote-backdrop"></div>
+  <div class="container quote-container">
+    <div class="quote-mark"><i class={quote.mark}></i></div>
+    <h2 class="quote-headline">
+      {quote.headline}
+    </h2>
+    <p class="quote-subtext">
+      {quote.subtext}
+    </p>
+    <div class="quote-author">
+      <span class="author-name">{quote.author}</span>
+      <span class="author-role">{quote.role}</span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,46 @@
+---
+// src/components/Projects.astro
+import { projects } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<section class="projects-section" id="projects">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-tag">PROYEK & BISNIS</span>
+      <h2 class="section-title">Inisiatif Nyata dan Kewirausahaan</h2>
+      <p class="section-desc">
+        Pemberdayaan masyarakat, promosi pariwisata daerah, dan brand wirausaha mandiri.
+      </p>
+    </div>
+
+    <div class="projects-grid">
+      {projects.map((project) => (
+        <article class="project-card">
+          <div class="project-image-box">
+            <picture>
+              <source srcset={`${base}${project.imageWebp}`} type="image/webp" />
+              <img src={`${base}${project.image}`} alt={project.title} loading="lazy" />
+            </picture>
+            <span class="project-tag">
+              <i class={project.tagIcon}></i> {project.tag}
+            </span>
+          </div>
+          <div class="project-content">
+            <span class="project-role">
+              <i class={project.roleIcon}></i> {project.role}
+            </span>
+            <h3 class="project-title">{project.title}</h3>
+            <p class="project-desc">{project.desc}</p>
+            <div class="project-footer">
+              <span class="status-indicator">
+                <i class={project.statusIcon}></i> {project.status}
+              </span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

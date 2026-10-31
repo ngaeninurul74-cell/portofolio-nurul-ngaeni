@@ -1,0 +1,2195 @@
+---
+// src/pages/admin.astro
+// Panel Admin CMS Portofolio Nurul Ngaeni (Security-Hardened, Astro Native)
+import rawPortfolioContent from '../data/portfolioContent.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+const initialDataJson = JSON.stringify(rawPortfolioContent);
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+    />
+    <title>Admin CMS | Portofolio Nurul Ngaeni</title>
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="alternate icon" type="image/png" href={`${base}favicon.png`} />
+    <link rel="shortcut icon" href={`${base}favicon.ico`} />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        --admin-bg-base: #090d16;
+        --admin-bg-surface: #101726;
+        --admin-bg-card: #162034;
+        --admin-bg-input: #0b111c;
+        --admin-border-subtle: rgba(255, 255, 255, 0.08);
+        --admin-border-focus: #f59e0b;
+        --admin-text-primary: #f8fafc;
+        --admin-text-secondary: #94a3b8;
+        --admin-text-muted: #64748b;
+        --admin-accent-gold: #f59e0b;
+        --admin-accent-gold-dark: #d97706;
+        --admin-accent-gold-soft: rgba(245, 158, 11, 0.12);
+        --admin-success: #10b981;
+        --admin-danger: #ef4444;
+        --admin-font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+        --admin-font-heading: 'Poppins', system-ui, sans-serif;
+        --admin-sidebar-width: 270px;
+        --admin-header-height: 64px;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--admin-font-body);
+        background: var(--admin-bg-base);
+        color: var(--admin-text-primary);
+        line-height: 1.5;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Login Screen */
+      .login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+        background: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 60%), var(--admin-bg-base);
+      }
+
+      .login-sheet {
+        width: 100%;
+        max-width: 440px;
+        background: var(--admin-bg-surface);
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      .login-brand-row {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        margin-bottom: 1.75rem;
+      }
+
+      .brand-monogram {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--admin-accent-gold), var(--admin-accent-gold-dark));
+        color: #0b0f19;
+        font-family: var(--admin-font-heading);
+        font-weight: 900;
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      }
+
+      .brand-meta .brand-name {
+        display: block;
+        font-family: var(--admin-font-heading);
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 0.05em;
+        color: #ffffff;
+      }
+
+      .brand-meta .brand-scope {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--admin-text-muted);
+      }
+
+      .login-title {
+        font-family: var(--admin-font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+      }
+
+      .login-desc {
+        font-size: 0.88rem;
+        color: var(--admin-text-secondary);
+        margin-bottom: 1.75rem;
+        line-height: 1.6;
+      }
+
+      /* Alert Box */
+      .alert-box {
+        padding: 0.85rem 1.1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .alert-error {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+
+      .alert-success {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+      }
+
+      /* Form Fields */
+      .field-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .field-label {
+        display: block;
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: var(--admin-text-secondary);
+        margin-bottom: 0.4rem;
+      }
+
+      .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+      }
+
+      .text-action-btn {
+        background: none;
+        border: none;
+        color: var(--admin-accent-gold);
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .field-input, .field-textarea, .field-select {
+        width: 100%;
+        background: var(--admin-bg-input);
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .field-input:focus, .field-textarea:focus, .field-select:focus {
+        outline: none;
+        border-color: var(--admin-border-focus);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+      }
+
+      .field-textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+
+      .field-hint {
+        display: block;
+        font-size: 0.76rem;
+        color: var(--admin-text-muted);
+        margin-top: 0.35rem;
+      }
+
+      /* Buttons */
+      .btn-primary {
+        background: var(--admin-accent-gold);
+        color: #0b0f19;
+        font-family: var(--admin-font-heading);
+        font-weight: 700;
+        border: none;
+        border-radius: 8px;
+        padding: 0.85rem 1.5rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: transform 0.15s ease, background-color 0.15s ease;
+        text-decoration: none;
+      }
+
+      .btn-primary:hover {
+        background: var(--admin-accent-gold-dark);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--admin-bg-card);
+        color: var(--admin-text-primary);
+        font-family: var(--admin-font-heading);
+        font-weight: 600;
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+        text-decoration: none;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--admin-accent-gold);
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.5rem 0.9rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
+
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25);
+      }
+
+      .btn-block {
+        width: 100%;
+      }
+
+      /* Admin Layout */
+      .admin-layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .admin-sidebar {
+        width: var(--admin-sidebar-width);
+        background: var(--admin-bg-surface);
+        border-right: 1px solid var(--admin-border-subtle);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 40;
+        overflow-y: auto;
+      }
+
+      .sidebar-brand-box {
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid var(--admin-border-subtle);
+      }
+
+      .sidebar-nav {
+        padding: 1.25rem 0.75rem;
+        flex: 1;
+      }
+
+      .nav-group-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--admin-text-muted);
+        padding: 0.75rem 0.75rem 0.35rem;
+      }
+
+      .nav-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 0.85rem;
+        border-radius: 8px;
+        background: none;
+        border: none;
+        color: var(--admin-text-secondary);
+        font-family: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.15s ease, color 0.15s ease;
+        margin-bottom: 2px;
+      }
+
+      .nav-item i {
+        font-size: 1.1rem;
+        color: var(--admin-text-muted);
+        transition: color 0.15s ease;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: #ffffff;
+      }
+
+      .nav-item:hover i {
+        color: var(--admin-accent-gold);
+      }
+
+      .nav-item.active {
+        background: var(--admin-accent-gold-soft);
+        color: var(--admin-accent-gold);
+        font-weight: 700;
+      }
+
+      .nav-item.active i {
+        color: var(--admin-accent-gold);
+      }
+
+      .nav-count {
+        margin-left: auto;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--admin-text-secondary);
+      }
+
+      .sidebar-footer {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--admin-border-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--admin-accent-gold-soft);
+        color: var(--admin-accent-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+      }
+
+      .user-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #ffffff;
+        display: block;
+      }
+
+      .user-role {
+        font-size: 0.7rem;
+        color: var(--admin-text-muted);
+        display: block;
+      }
+
+      .btn-logout {
+        background: none;
+        border: none;
+        color: var(--admin-text-muted);
+        font-size: 1.15rem;
+        cursor: pointer;
+        padding: 0.35rem;
+        border-radius: 6px;
+        transition: color 0.15s ease;
+      }
+
+      .btn-logout:hover {
+        color: var(--admin-danger);
+      }
+
+      /* Main Workspace */
+      .admin-main {
+        margin-left: var(--admin-sidebar-width);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Header Bar */
+      .admin-header {
+        height: var(--admin-header-height);
+        background: var(--admin-bg-surface);
+        border-bottom: 1px solid var(--admin-border-subtle);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        backdrop-filter: blur(12px);
+      }
+
+      .header-title-box {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .section-heading-title {
+        font-family: var(--admin-font-heading);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .mode-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .mode-local {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      .mode-remote {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .dirty-indicator {
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: var(--admin-text-muted);
+      }
+
+      .dirty-indicator.unsaved {
+        color: var(--admin-accent-gold);
+      }
+
+      .dirty-indicator .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--admin-text-muted);
+      }
+
+      .dirty-indicator.unsaved .pulse-dot {
+        background: var(--admin-accent-gold);
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+      }
+
+      /* Content Container */
+      .admin-content {
+        padding: 2.25rem;
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        flex: 1;
+      }
+
+      /* Section Panels */
+      .admin-panel {
+        display: none;
+      }
+
+      .admin-panel.active {
+        display: block;
+        animation: fadeIn 0.2s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .panel-card {
+        background: var(--admin-bg-surface);
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 14px;
+        padding: 1.75rem 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .card-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--admin-border-subtle);
+      }
+
+      .card-title {
+        font-family: var(--admin-font-heading);
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .card-title i {
+        color: var(--admin-accent-gold);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+      }
+
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+      }
+
+      /* Photo Preview Box */
+      .photo-preview-box {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        background: var(--admin-bg-input);
+        padding: 1.25rem;
+        border-radius: 10px;
+        border: 1px solid var(--admin-border-subtle);
+        margin-bottom: 1rem;
+      }
+
+      .preview-thumbnail {
+        width: 90px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--admin-border-subtle);
+        background: #000000;
+      }
+
+      .preview-meta {
+        flex: 1;
+      }
+
+      .preview-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 0.25rem;
+      }
+
+      .preview-path {
+        font-size: 0.78rem;
+        color: var(--admin-text-muted);
+        font-family: monospace;
+        margin-bottom: 0.75rem;
+        word-break: break-all;
+      }
+
+      /* Items List Manager */
+      .items-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .item-row-card {
+        background: var(--admin-bg-card);
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 10px;
+        padding: 1.25rem;
+        transition: border-color 0.15s ease;
+      }
+
+      .item-row-card:hover {
+        border-color: rgba(245, 158, 11, 0.3);
+      }
+
+      .item-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .item-index-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--admin-accent-gold);
+        background: var(--admin-accent-gold-soft);
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+      }
+
+      /* Toast Notifications */
+      .toast-stack {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .toast-msg {
+        background: var(--admin-bg-surface);
+        border: 1px solid var(--admin-border-subtle);
+        border-radius: 10px;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.88rem;
+        color: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 280px;
+        animation: slideInRight 0.25s ease;
+      }
+
+      .toast-msg.success {
+        border-color: rgba(16, 185, 129, 0.5);
+      }
+
+      .toast-msg.success i {
+        color: var(--admin-success);
+        font-size: 1.2rem;
+      }
+
+      .toast-msg.error {
+        border-color: rgba(239, 68, 68, 0.5);
+      }
+
+      .toast-msg.error i {
+        color: var(--admin-danger);
+        font-size: 1.2rem;
+      }
+
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .admin-sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+        }
+
+        .admin-sidebar.open {
+          transform: translateX(0);
+        }
+
+        .admin-main {
+          margin-left: 0;
+        }
+
+        .grid-2, .grid-3, .grid-4 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body data-base-url={base}>
+    <!-- Initial Server Content Payload -->
+    <script type="application/json" id="initial-cms-payload" set:html={initialDataJson}></script>
+
+    <!-- ==========================================
+         1. LAYAR LOGIN KEAMANAN ADMIN
+         ========================================== -->
+    <main id="login-view" class="login-screen" aria-labelledby="login-heading">
+      <div class="login-sheet">
+        <div class="login-brand-row">
+          <div class="brand-monogram" aria-hidden="true">N</div>
+          <div class="brand-meta">
+            <span class="brand-name">NURUL CMS</span>
+            <span class="brand-scope">Manajemen Portofolio Profesional</span>
+          </div>
+        </div>
+
+        <h1 id="login-heading" class="login-title">Masuk ke Panel Admin</h1>
+        <p class="login-desc">
+          Panel kontrol terproteksi untuk mengelola profil, galeri foto, rekam jejak acara, prestasi, dan pengaturan portofolio Nurul Ngaeni.
+        </p>
+
+        <div id="login-alert" class="alert-box alert-error" role="alert" style="display: none;"></div>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="field-group">
+            <label for="login-username" class="field-label">Username</label>
+            <input
+              type="text"
+              id="login-username"
+              name="username"
+              class="field-input"
+              autocomplete="username"
+              placeholder="Masukkan username admin"
+              required
+            />
+          </div>
+
+          <div class="field-group">
+            <div class="label-row">
+              <label for="login-password" class="field-label">Password</label>
+              <button
+                type="button"
+                id="toggle-password-btn"
+                class="text-action-btn"
+                aria-label="Tampilkan atau sembunyikan password"
+              >
+                Tampilkan
+              </button>
+            </div>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              class="field-input"
+              autocomplete="current-password"
+              placeholder="Masukkan password admin"
+              required
+            />
+            <span class="field-hint">
+              Otentikasi dilindungi enkripsi hash SHA-256 dan pembatasan percobaan brute-force.
+            </span>
+          </div>
+
+          <button type="submit" id="submit-login-btn" class="btn-primary btn-block" style="margin-top: 1.5rem;">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Masuk ke Panel Kontrol</span>
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- ==========================================
+         2. WORKSPACE PANEL ADMIN
+         ========================================== -->
+    <div id="admin-view" class="admin-layout" style="display: none;">
+      <!-- Sidebar Navigasi -->
+      <aside class="admin-sidebar" aria-label="Sidebar Admin">
+        <div class="sidebar-brand-box">
+          <div class="brand-monogram" style="width: 36px; height: 36px; font-size: 1.1rem;">N</div>
+          <div class="brand-meta">
+            <span class="brand-name" style="font-size: 0.95rem;">NURUL CMS</span>
+            <span class="brand-scope" style="font-size: 0.72rem;">Admin Dashboard v2.5</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-group-label">Ikhtisar</div>
+          <button type="button" class="nav-item active" data-section="overview">
+            <i class="bi bi-grid-1x2"></i>
+            <span>Ringkasan Data</span>
+          </button>
+
+          <div class="nav-group-label">Bagian Halaman</div>
+          <button type="button" class="nav-item" data-section="profile">
+            <i class="bi bi-person-vcard"></i>
+            <span>Profil &amp; Hero Utama</span>
+          </button>
+          <button type="button" class="nav-item" data-section="about">
+            <i class="bi bi-file-earmark-person"></i>
+            <span>Tentang &amp; Filosofi</span>
+          </button>
+          <button type="button" class="nav-item" data-section="stats">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Statistik Dampak</span>
+            <span class="nav-count" id="count-stats">4</span>
+          </button>
+          <button type="button" class="nav-item" data-section="partners">
+            <i class="bi bi-building-check"></i>
+            <span>Mitra &amp; Kolaborasi</span>
+            <span class="nav-count" id="count-partners">6</span>
+          </button>
+          <button type="button" class="nav-item" data-section="services">
+            <i class="bi bi-award"></i>
+            <span>Layanan &amp; Kompetensi</span>
+            <span class="nav-count" id="count-services">4</span>
+          </button>
+          <button type="button" class="nav-item" data-section="gallery">
+            <i class="bi bi-images"></i>
+            <span>Galeri Dokumentasi</span>
+            <span class="nav-count" id="count-gallery">14</span>
+          </button>
+          <button type="button" class="nav-item" data-section="projects">
+            <i class="bi bi-rocket-takeoff"></i>
+            <span>Proyek &amp; Bisnis</span>
+            <span class="nav-count" id="count-projects">3</span>
+          </button>
+          <button type="button" class="nav-item" data-section="achievements">
+            <i class="bi bi-trophy"></i>
+            <span>Prestasi &amp; Apresiasi</span>
+            <span class="nav-count" id="count-achievements">7</span>
+          </button>
+          <button type="button" class="nav-item" data-section="values">
+            <i class="bi bi-shield-check"></i>
+            <span>Prinsip &amp; Nilai</span>
+            <span class="nav-count" id="count-values">5</span>
+          </button>
+          <button type="button" class="nav-item" data-section="contact">
+            <i class="bi bi-envelope-at"></i>
+            <span>Kontak &amp; Booking</span>
+          </button>
+
+          <div class="nav-group-label">Sistem &amp; Keamanan</div>
+          <button type="button" class="nav-item" data-section="settings">
+            <i class="bi bi-gear-wide-connected"></i>
+            <span>Pengaturan &amp; GitHub</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="user-avatar">N</div>
+            <div>
+              <span class="user-name">Nurul Ngaeni</span>
+              <span class="user-role">Administrator</span>
+            </div>
+          </div>
+          <button type="button" id="logout-btn" class="btn-logout" title="Keluar">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Workspace -->
+      <main class="admin-main">
+        <header class="admin-header">
+          <div class="header-title-box">
+            <h2 id="current-section-title" class="section-heading-title">Ringkasan Data</h2>
+            <span id="env-mode-badge" class="mode-badge mode-local">
+              <i class="bi bi-hdd-network"></i>
+              <span>Memeriksa Mode...</span>
+            </span>
+          </div>
+
+          <div class="header-actions">
+            <div id="dirty-status" class="dirty-indicator">
+              <span class="pulse-dot"></span>
+              <span id="dirty-status-text">Semua perubahan tersimpan</span>
+            </div>
+
+            <a href={`${base}`} target="_blank" rel="noopener noreferrer" class="btn-secondary">
+              <i class="bi bi-box-arrow-up-right"></i>
+              <span>Lihat Website</span>
+            </a>
+
+            <button type="button" id="save-all-btn" class="btn-primary">
+              <i class="bi bi-cloud-arrow-up"></i>
+              <span>Simpan Perubahan</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="admin-content">
+          <div id="active-panel-container">
+            <!-- Dynamic Content rendered by JavaScript -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Hidden File Input for Image Uploads -->
+    <input type="file" id="cms-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;" />
+
+    <!-- Toast Notifications Stack -->
+    <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+    <!-- ==========================================
+         3. LOGIKA JAVASCRIPT PANEL ADMIN
+         ========================================== -->
+    <script>
+      // State Management
+      let initialData = {};
+      let workingContent = null;
+      let activeSection = 'overview';
+      let isDirty = false;
+      let isLocalDev = false;
+      let currentUploadCallback = null;
+
+      // SHA-256 Helper
+      async function sha256Hex(plain) {
+        const enc = new TextEncoder();
+        const hashBuf = await crypto.subtle.digest('SHA-256', enc.encode(plain));
+        return Array.from(new Uint8Array(hashBuf))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      // Default Admin Credentials Hash
+      // Default: admin / admin123 -> SHA-256 of 'admin123'
+      const DEFAULT_PASS_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+      const DEFAULT_USER = 'admin';
+
+      function getStoredCredentials() {
+        const user = localStorage.getItem('nurul_cms_user') || DEFAULT_USER;
+        const passHash = localStorage.getItem('nurul_cms_pass_hash') || DEFAULT_PASS_HASH;
+        return { user, passHash };
+      }
+
+      // Toast Notifications
+      function showToast(message, type = 'success') {
+        const stack = document.getElementById('toast-stack');
+        if (!stack) return;
+        const toast = document.createElement('div');
+        toast.className = `toast-msg ${type}`;
+        toast.innerHTML = `
+          <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}"></i>
+          <span>${message}</span>
+        `;
+        stack.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          setTimeout(() => toast.remove(), 250);
+        }, 3500);
+      }
+
+      function markDirty() {
+        isDirty = true;
+        const status = document.getElementById('dirty-status');
+        const text = document.getElementById('dirty-status-text');
+        if (status && text) {
+          status.classList.add('unsaved');
+          text.textContent = 'Perubahan belum disimpan';
+        }
+      }
+
+      function markClean() {
+        isDirty = false;
+        const status = document.getElementById('dirty-status');
+        const text = document.getElementById('dirty-status-text');
+        if (status && text) {
+          status.classList.remove('unsaved');
+          text.textContent = 'Semua perubahan tersimpan';
+        }
+      }
+
+      // Check Environment Mode
+      async function checkEnvironmentMode() {
+        const badge = document.getElementById('env-mode-badge');
+        try {
+          const res = await fetch('/__admin_api/ping', { method: 'GET' });
+          if (res.ok) {
+            isLocalDev = true;
+            if (badge) {
+              badge.className = 'mode-badge mode-local';
+              badge.innerHTML = '<i class="bi bi-hdd-network"></i><span>Mode: Pengembangan Lokal (Astro Dev)</span>';
+            }
+            return;
+          }
+        } catch {
+          // fetch failed, running in production
+        }
+        isLocalDev = false;
+        if (badge) {
+          badge.className = 'mode-badge mode-remote';
+          badge.innerHTML = '<i class="bi bi-cloud-check"></i><span>Mode: GitHub Pages Production</span>';
+        }
+      }
+
+      // Load Content
+      function loadWorkingContent() {
+        const scriptPayload = document.getElementById('initial-cms-payload');
+        if (scriptPayload) {
+          try {
+            initialData = JSON.parse(scriptPayload.textContent || '{}');
+          } catch (e) {
+            console.error('Gagal membaca initial payload', e);
+          }
+        }
+
+        const draft = localStorage.getItem('nurul_cms_draft_data');
+        if (draft) {
+          try {
+            workingContent = JSON.parse(draft);
+            markDirty();
+          } catch {
+            workingContent = JSON.parse(JSON.stringify(initialData));
+          }
+        } else {
+          workingContent = JSON.parse(JSON.stringify(initialData));
+        }
+        updateCounts();
+      }
+
+      function updateCounts() {
+        if (!workingContent) return;
+        const setVal = (id, count) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = String(count || 0);
+        };
+        setVal('count-stats', workingContent.stats?.length);
+        setVal('count-partners', workingContent.partners?.items?.length);
+        setVal('count-services', workingContent.services?.length);
+        setVal('count-gallery', workingContent.gallery?.length);
+        setVal('count-projects', workingContent.projects?.length);
+        setVal('count-achievements', workingContent.achievements?.length);
+        setVal('count-values', workingContent.values?.length);
+      }
+
+      // Save Changes
+      async function saveAllChanges() {
+        const saveBtn = document.getElementById('save-all-btn');
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Menyimpan...</span>';
+        }
+
+        try {
+          if (isLocalDev) {
+            // Local dev save
+            const res = await fetch('/__admin_api/save', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-cms-request': 'nurul-admin-v1'
+              },
+              body: JSON.stringify(workingContent)
+            });
+            const data = await res.json();
+            if (!res.ok || !data.ok) {
+              throw new Error(data.error || 'Gagal menyimpan ke server lokal');
+            }
+            localStorage.removeItem('nurul_cms_draft_data');
+            markClean();
+            showToast('Perubahan berhasil disimpan ke src/data/portfolioContent.json!');
+          } else {
+            // Remote production save: check GitHub PAT or download JSON
+            const pat = localStorage.getItem('nurul_cms_github_pat');
+            const repo = localStorage.getItem('nurul_cms_github_repo') || 'ngaeninurul74-cell/portofolio-nurul-ngaeni';
+            if (pat) {
+              await pushToGitHub(pat, repo);
+            } else {
+              // Direct download fallback
+              downloadJsonBackup();
+              showToast('Perubahan diunduh sebagai file portfolioContent.json (mode static)', 'success');
+              markClean();
+            }
+          }
+        } catch (err) {
+          showToast(`Error: ${err.message}`, 'error');
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i><span>Simpan Perubahan</span>';
+          }
+        }
+      }
+
+      // GitHub Push
+      async function pushToGitHub(pat, repo) {
+        const path = 'src/data/portfolioContent.json';
+        const contentStr = JSON.stringify(workingContent, null, 2) + '\n';
+        const base64Content = btoa(unescape(encodeURIComponent(contentStr)));
+
+        // Get file SHA
+        const getUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `Bearer ${pat}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        let sha = null;
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+
+        const putRes = await fetch(getUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${pat}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: 'chore(cms): update portfolio content via Admin Panel',
+            content: base64Content,
+            sha: sha || undefined
+          })
+        });
+
+        if (!putRes.ok) {
+          const errData = await putRes.json();
+          throw new Error(errData.message || 'Gagal commit ke GitHub');
+        }
+
+        localStorage.removeItem('nurul_cms_draft_data');
+        markClean();
+        showToast('Berhasil commit langsung ke GitHub repository!');
+      }
+
+      function downloadJsonBackup() {
+        const blob = new Blob([JSON.stringify(workingContent, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'portfolioContent.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // Canvas Rasterization & Anti-php2shell Upload
+      function triggerImageUpload(folder, callback) {
+        currentUploadCallback = callback;
+        const fileInput = document.getElementById('cms-file-input');
+        if (fileInput) {
+          fileInput.value = '';
+          fileInput.onchange = async () => {
+            const file = fileInput.files?.[0];
+            if (!file) return;
+
+            // 1. Validate MIME
+            const validMimes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!validMimes.includes(file.type)) {
+              showToast('Hanya format JPG, PNG, atau WebP yang diizinkan!', 'error');
+              return;
+            }
+
+            // 2. Validate Size (max 5 MB)
+            if (file.size > 5 * 1024 * 1024) {
+              showToast('Ukuran foto maksimal 5 MB!', 'error');
+              return;
+            }
+
+            try {
+              // 3. Canvas Rasterization (Eliminates php2shell and malicious code injection)
+              const img = new Image();
+              const objectUrl = URL.createObjectURL(file);
+              await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = objectUrl;
+              });
+
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              if (!ctx) throw new Error('Gagal memproses kanvas gambar');
+              ctx.drawImage(img, 0, 0);
+              URL.revokeObjectURL(objectUrl);
+
+              const base64Data = canvas.toDataURL('image/webp', 0.92);
+              const safeFileName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase() + '.webp';
+
+              if (isLocalDev) {
+                // Upload via API
+                const res = await fetch('/__admin_api/upload', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-cms-request': 'nurul-admin-v1'
+                  },
+                  body: JSON.stringify({
+                    filename: safeFileName,
+                    base64Data: base64Data,
+                    folder: folder || 'landing_page_assets/gallery'
+                  })
+                });
+                const resData = await res.json();
+                if (!res.ok || !resData.ok) {
+                  throw new Error(resData.error || 'Upload gagal');
+                }
+                showToast('Foto berhasil diunggah dan disimpan!');
+                if (currentUploadCallback) currentUploadCallback(resData.path);
+              } else {
+                // In production, fallback to base64 preview
+                showToast('Foto diproses (tersimpan lokal sebagai WebP raster)', 'success');
+                if (currentUploadCallback) currentUploadCallback(base64Data);
+              }
+              markDirty();
+              renderActiveSection();
+            } catch (err) {
+              showToast(`Gagal memproses foto: ${err.message}`, 'error');
+            }
+          };
+          fileInput.click();
+        }
+      }
+
+      // Section Renderers
+      function renderActiveSection() {
+        const container = document.getElementById('active-panel-container');
+        const titleEl = document.getElementById('current-section-title');
+        if (!container || !workingContent) return;
+
+        switch (activeSection) {
+          case 'overview':
+            if (titleEl) titleEl.textContent = 'Ringkasan Data & Status Sistem';
+            container.innerHTML = renderOverview();
+            break;
+          case 'profile':
+            if (titleEl) titleEl.textContent = 'Profil & Hero Utama';
+            container.innerHTML = renderProfile();
+            break;
+          case 'about':
+            if (titleEl) titleEl.textContent = 'Tentang Saya & Filosofi';
+            container.innerHTML = renderAbout();
+            break;
+          case 'stats':
+            if (titleEl) titleEl.textContent = 'Statistik Dampak (Counter)';
+            container.innerHTML = renderStats();
+            break;
+          case 'partners':
+            if (titleEl) titleEl.textContent = 'Mitra & Kolaborasi';
+            container.innerHTML = renderPartners();
+            break;
+          case 'services':
+            if (titleEl) titleEl.textContent = 'Layanan & Kompetensi';
+            container.innerHTML = renderServices();
+            break;
+          case 'gallery':
+            if (titleEl) titleEl.textContent = 'Galeri Dokumentasi Foto';
+            container.innerHTML = renderGallery();
+            break;
+          case 'projects':
+            if (titleEl) titleEl.textContent = 'Proyek & Inisiatif Bisnis';
+            container.innerHTML = renderProjects();
+            break;
+          case 'achievements':
+            if (titleEl) titleEl.textContent = 'Prestasi & Apresiasi';
+            container.innerHTML = renderAchievements();
+            break;
+          case 'values':
+            if (titleEl) titleEl.textContent = 'Prinsip & Nilai Kerja';
+            container.innerHTML = renderValues();
+            break;
+          case 'contact':
+            if (titleEl) titleEl.textContent = 'Kontak & Booking';
+            container.innerHTML = renderContact();
+            break;
+          case 'settings':
+            if (titleEl) titleEl.textContent = 'Pengaturan & GitHub Sync';
+            container.innerHTML = renderSettings();
+            break;
+        }
+        attachFormListeners();
+      }
+
+      // Overview HTML
+      function renderOverview() {
+        const p = workingContent.personal || {};
+        return `
+          <div class="panel-card">
+            <div class="card-header-row">
+              <h3 class="card-title"><i class="bi bi-speedometer2"></i> Ikhtisar Portofolio</h3>
+              <span class="mode-badge mode-local"><i class="bi bi-shield-check"></i> Keamanan Aktif</span>
+            </div>
+            <p style="color: var(--admin-text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+              Selamat datang di Panel Admin CMS Portofolio <strong>${p.name || 'Nurul Ngaeni'}</strong>. Kelola seluruh konten publik website tanpa perlu menyunting kode sumber secara manual.
+            </p>
+            <div class="grid-4">
+              <div class="item-row-card" style="text-align: center;">
+                <div style="font-size: 2rem; font-family: var(--admin-font-heading); font-weight: 800; color: var(--admin-accent-gold);">
+                  ${workingContent.gallery?.length || 0}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--admin-text-secondary); font-weight: 600;">Foto Dokumentasi</div>
+              </div>
+              <div class="item-row-card" style="text-align: center;">
+                <div style="font-size: 2rem; font-family: var(--admin-font-heading); font-weight: 800; color: var(--admin-accent-gold);">
+                  ${workingContent.services?.length || 0}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--admin-text-secondary); font-weight: 600;">Layanan Kompetensi</div>
+              </div>
+              <div class="item-row-card" style="text-align: center;">
+                <div style="font-size: 2rem; font-family: var(--admin-font-heading); font-weight: 800; color: var(--admin-accent-gold);">
+                  ${workingContent.achievements?.length || 0}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--admin-text-secondary); font-weight: 600;">Prestasi & Apresiasi</div>
+              </div>
+              <div class="item-row-card" style="text-align: center;">
+                <div style="font-size: 2rem; font-family: var(--admin-font-heading); font-weight: 800; color: var(--admin-accent-gold);">
+                  ${workingContent.partners?.items?.length || 0}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--admin-text-secondary); font-weight: 600;">Mitra Kolaborasi</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Profile HTML
+      function renderProfile() {
+        const p = workingContent.personal || {};
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-person-badge"></i> Identitas & Hero Section</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Nama Lengkap</label>
+                <input type="text" class="field-input" data-bind="personal.name" value="${p.name || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Lencana Hero (Badge Pill)</label>
+                <input type="text" class="field-input" data-bind="personal.badge" value="${p.badge || ''}" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Headline Utama (Hero Title)</label>
+              <input type="text" class="field-input" data-bind="personal.headline" value="${p.headline || ''}" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Deskripsi / Subheadline</label>
+              <textarea class="field-textarea" data-bind="personal.subheadline">${p.subheadline || ''}</textarea>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Lokasi Operasional</label>
+                <input type="text" class="field-input" data-bind="personal.location" value="${p.location || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Institusi / Kampus</label>
+                <input type="text" class="field-input" data-bind="personal.campus" value="${p.campus || ''}" />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Floating Badge Angka</label>
+                <input type="text" class="field-input" data-bind="personal.floatingBadgeValue" value="${p.floatingBadgeValue || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Floating Badge Label</label>
+                <input type="text" class="field-input" data-bind="personal.floatingBadgeLabel" value="${p.floatingBadgeLabel || ''}" />
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 1.5rem;">
+              <label class="field-label">Foto Hero Utama (Grounded Silhouette)</label>
+              <div class="photo-preview-box">
+                <img src="${p.heroImage || ''}" class="preview-thumbnail" alt="Hero Portrait" />
+                <div class="preview-meta">
+                  <div class="preview-label">Hero Cover Image (Format WebP/PNG)</div>
+                  <div class="preview-path">${p.heroImageWebp || p.heroImage || ''}</div>
+                  <button type="button" class="btn-secondary" onclick="window.cmsUploadHeroPhoto()">
+                    <i class="bi bi-camera"></i> Ganti & Unggah Foto Hero
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // About HTML
+      function renderAbout() {
+        const a = workingContent.about || {};
+        const q = workingContent.quote || {};
+        const cards = a.cards || [];
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-card-text"></i> Bagian Tentang Saya (Editorial Style)</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Label Tag</label>
+                <input type="text" class="field-input" data-bind="about.tag" value="${a.tag || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Judul Headline</label>
+                <input type="text" class="field-input" data-bind="about.headline" value="${a.headline || ''}" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Teks Narasi Profil</label>
+              <textarea class="field-textarea" style="min-height: 120px;" data-bind="about.text">${a.text || ''}</textarea>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Label Stiker Kuning di Atas Foto</label>
+              <input type="text" class="field-input" data-bind="about.formalPhotoTag" value="${a.formalPhotoTag || ''}" />
+            </div>
+
+            <div class="field-group" style="margin-top: 1rem;">
+              <label class="field-label">Foto Profil Formal Almamater</label>
+              <div class="photo-preview-box">
+                <img src="${workingContent.personal?.aboutImage || ''}" class="preview-thumbnail" alt="About Portrait" />
+                <div class="preview-meta">
+                  <div class="preview-label">Formal Portrait Image</div>
+                  <div class="preview-path">${workingContent.personal?.aboutImageWebp || ''}</div>
+                  <button type="button" class="btn-secondary" onclick="window.cmsUploadAboutPhoto()">
+                    <i class="bi bi-camera"></i> Ganti & Unggah Foto Formal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-chat-quote"></i> Banner Filosofi (Chalkboard Style)</h3>
+            <div class="field-group">
+              <label class="field-label">Headline Filosofi</label>
+              <input type="text" class="field-input" data-bind="quote.headline" value="${q.headline || ''}" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Subteks Penjelasan</label>
+              <textarea class="field-textarea" data-bind="quote.subtext">${q.subtext || ''}</textarea>
+            </div>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Nama Penulis</label>
+                <input type="text" class="field-input" data-bind="quote.author" value="${q.author || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Peran / Jabatan</label>
+                <input type="text" class="field-input" data-bind="quote.role" value="${q.role || ''}" />
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Stats HTML
+      function renderStats() {
+        const stats = workingContent.stats || [];
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-graph-up"></i> 4 Statistik Dampak & Capaian</h3>
+            <div class="items-container">
+              ${stats.map((s, idx) => `
+                <div class="item-row-card">
+                  <div class="item-card-top">
+                    <span class="item-index-badge">Stat #${idx + 1}</span>
+                    <span style="font-size: 0.8rem; color: var(--admin-text-muted);"><i class="${s.icon}"></i> ${s.icon}</span>
+                  </div>
+                  <div class="grid-3">
+                    <div class="field-group">
+                      <label class="field-label">Angka / Nilai (Contoh: 40+)</label>
+                      <input type="text" class="field-input" data-array-bind="stats.${idx}.value" value="${s.value || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Judul Label</label>
+                      <input type="text" class="field-input" data-array-bind="stats.${idx}.label" value="${s.label || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Icon Bootstrap</label>
+                      <input type="text" class="field-input" data-array-bind="stats.${idx}.icon" value="${s.icon || ''}" />
+                    </div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">Keterangan Subteks</label>
+                    <input type="text" class="field-input" data-array-bind="stats.${idx}.desc" value="${s.desc || ''}" />
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Partners HTML
+      function renderPartners() {
+        const p = workingContent.partners || { items: [] };
+        return `
+          <div class="panel-card">
+            <div class="card-header-row">
+              <h3 class="card-title"><i class="bi bi-building"></i> Mitra & Kolaborasi ("Featured In" Ribbon)</h3>
+              <button type="button" class="btn-secondary" onclick="window.cmsAddPartner()">
+                <i class="bi bi-plus-lg"></i> Tambah Mitra
+              </button>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Judul Pita Mitra</label>
+              <input type="text" class="field-input" data-bind="partners.title" value="${p.title || ''}" />
+            </div>
+
+            <div class="items-container" style="margin-top: 1.5rem;">
+              ${(p.items || []).map((item, idx) => `
+                <div class="item-row-card" style="display: flex; align-items: center; gap: 1rem;">
+                  <div style="flex: 2;">
+                    <label class="field-label">Nama Institusi / Lembaga</label>
+                    <input type="text" class="field-input" data-array-bind="partners.items.${idx}.name" value="${item.name || ''}" />
+                  </div>
+                  <div style="flex: 1;">
+                    <label class="field-label">Icon Bootstrap</label>
+                    <input type="text" class="field-input" data-array-bind="partners.items.${idx}.icon" value="${item.icon || ''}" />
+                  </div>
+                  <button type="button" class="btn-danger" style="margin-top: 1.5rem;" onclick="window.cmsDeletePartner(${idx})">
+                    <i class="bi bi-trash"></i> Hapus
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Services HTML
+      function renderServices() {
+        const services = workingContent.services || [];
+        return `
+          <div class="panel-card">
+            <div class="card-header-row">
+              <h3 class="card-title"><i class="bi bi-award"></i> Layanan & Kompetensi Utama</h3>
+              <button type="button" class="btn-secondary" onclick="window.cmsAddService()">
+                <i class="bi bi-plus-lg"></i> Tambah Layanan
+              </button>
+            </div>
+            <div class="items-container">
+              ${services.map((srv, idx) => `
+                <div class="item-row-card">
+                  <div class="item-card-top">
+                    <span class="item-index-badge">Layanan #${idx + 1}</span>
+                    <button type="button" class="btn-danger" onclick="window.cmsDeleteService(${idx})">
+                      <i class="bi bi-trash"></i> Hapus
+                    </button>
+                  </div>
+                  <div class="grid-3">
+                    <div class="field-group">
+                      <label class="field-label">Judul Layanan</label>
+                      <input type="text" class="field-input" data-array-bind="services.${idx}.title" value="${srv.title || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Badge (Contoh: 40+ Event)</label>
+                      <input type="text" class="field-input" data-array-bind="services.${idx}.badge" value="${srv.badge || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Icon Bootstrap</label>
+                      <input type="text" class="field-input" data-array-bind="services.${idx}.icon" value="${srv.icon || ''}" />
+                    </div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">Deskripsi Layanan</label>
+                    <textarea class="field-textarea" data-array-bind="services.${idx}.desc">${srv.desc || ''}</textarea>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Gallery HTML
+      function renderGallery() {
+        const gallery = workingContent.gallery || [];
+        return `
+          <div class="panel-card">
+            <div class="card-header-row">
+              <h3 class="card-title"><i class="bi bi-images"></i> Manajemen Galeri Foto (${gallery.length} Foto)</h3>
+              <button type="button" class="btn-primary" onclick="window.cmsAddGalleryPhoto()">
+                <i class="bi bi-cloud-upload"></i> Unggah Foto Baru
+              </button>
+            </div>
+
+            <div class="items-container">
+              ${gallery.map((g, idx) => `
+                <div class="item-row-card" style="display: flex; gap: 1.25rem; align-items: flex-start;">
+                  <img src="${g.imageWebp || g.image || ''}" class="preview-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" alt="${g.title}" />
+                  <div style="flex: 1;">
+                    <div class="grid-3">
+                      <div class="field-group">
+                        <label class="field-label">Judul Foto Acara</label>
+                        <input type="text" class="field-input" data-array-bind="gallery.${idx}.title" value="${g.title || ''}" />
+                      </div>
+                      <div class="field-group">
+                        <label class="field-label">Kategori</label>
+                        <select class="field-select" data-array-bind="gallery.${idx}.category">
+                          <option value="mc" ${g.category === 'mc' ? 'selected' : ''}>MC Event</option>
+                          <option value="moderator" ${g.category === 'moderator' ? 'selected' : ''}>Moderator</option>
+                          <option value="speaker" ${g.category === 'speaker' ? 'selected' : ''}>Narasumber</option>
+                          <option value="modeling" ${g.category === 'modeling' ? 'selected' : ''}>Model & Muse</option>
+                          <option value="organizations" ${g.category === 'organizations' ? 'selected' : ''}>Organisasi</option>
+                        </select>
+                      </div>
+                      <div class="field-group">
+                        <label class="field-label">Label Kategori</label>
+                        <input type="text" class="field-input" data-array-bind="gallery.${idx}.categoryLabel" value="${g.categoryLabel || ''}" />
+                      </div>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Keterangan / Caption</label>
+                      <input type="text" class="field-input" data-array-bind="gallery.${idx}.desc" value="${g.desc || ''}" />
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                      <button type="button" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="window.cmsReplaceGalleryImage(${idx})">
+                        <i class="bi bi-arrow-repeat"></i> Ganti Foto
+                      </button>
+                      <button type="button" class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="window.cmsDeleteGallery(${idx})">
+                        <i class="bi bi-trash"></i> Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Projects HTML
+      function renderProjects() {
+        const projects = workingContent.projects || [];
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-rocket-takeoff"></i> Inisiatif & Proyek Nyata</h3>
+            <div class="items-container">
+              ${projects.map((p, idx) => `
+                <div class="item-row-card">
+                  <div class="item-card-top">
+                    <span class="item-index-badge">Proyek #${idx + 1}: ${p.title}</span>
+                  </div>
+                  <div class="grid-2">
+                    <div class="field-group">
+                      <label class="field-label">Judul Proyek</label>
+                      <input type="text" class="field-input" data-array-bind="projects.${idx}.title" value="${p.title || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Tag Kategori (Contoh: PPK Ormawa)</label>
+                      <input type="text" class="field-input" data-array-bind="projects.${idx}.tag" value="${p.tag || ''}" />
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="field-group">
+                      <label class="field-label">Peran (Role)</label>
+                      <input type="text" class="field-input" data-array-bind="projects.${idx}.role" value="${p.role || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Status (Contoh: Tuntas Abdidaya)</label>
+                      <input type="text" class="field-input" data-array-bind="projects.${idx}.status" value="${p.status || ''}" />
+                    </div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">Deskripsi Inisiatif</label>
+                    <textarea class="field-textarea" data-array-bind="projects.${idx}.desc">${p.desc || ''}</textarea>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Achievements HTML
+      function renderAchievements() {
+        const achievements = workingContent.achievements || [];
+        return `
+          <div class="panel-card">
+            <div class="card-header-row">
+              <h3 class="card-title"><i class="bi bi-trophy"></i> Rekam Jejak Prestasi & Apresiasi</h3>
+              <button type="button" class="btn-secondary" onclick="window.cmsAddAchievement()">
+                <i class="bi bi-plus-lg"></i> Tambah Prestasi
+              </button>
+            </div>
+            <div class="items-container">
+              ${achievements.map((item, idx) => `
+                <div class="item-row-card">
+                  <div class="item-card-top">
+                    <span class="item-index-badge">Tahun ${item.year || '-'}</span>
+                    <button type="button" class="btn-danger" onclick="window.cmsDeleteAchievement(${idx})">
+                      <i class="bi bi-trash"></i> Hapus
+                    </button>
+                  </div>
+                  <div class="grid-3">
+                    <div class="field-group">
+                      <label class="field-label">Tahun</label>
+                      <input type="text" class="field-input" data-array-bind="achievements.${idx}.year" value="${item.year || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Nama Penghargaan / Prestasi</label>
+                      <input type="text" class="field-input" data-array-bind="achievements.${idx}.title" value="${item.title || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Penyelenggara / Keterangan</label>
+                      <input type="text" class="field-input" data-array-bind="achievements.${idx}.subtitle" value="${item.subtitle || ''}" />
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Values HTML
+      function renderValues() {
+        const vals = workingContent.values || [];
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-shield-check"></i> 5 Nilai-Nilai Profesional</h3>
+            <div class="items-container">
+              ${vals.map((v, idx) => `
+                <div class="item-row-card">
+                  <div class="grid-2">
+                    <div class="field-group">
+                      <label class="field-label">Nama Nilai (Title)</label>
+                      <input type="text" class="field-input" data-array-bind="values.${idx}.title" value="${v.title || ''}" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Icon Bootstrap</label>
+                      <input type="text" class="field-input" data-array-bind="values.${idx}.icon" value="${v.icon || ''}" />
+                    </div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label">Deskripsi Prinsip</label>
+                    <input type="text" class="field-input" data-array-bind="values.${idx}.desc" value="${v.desc || ''}" />
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Contact HTML
+      function renderContact() {
+        const c = workingContent.contact || {};
+        const p = workingContent.personal || {};
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-envelope-at"></i> Pengaturan Kontak & Booking</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Nomor WhatsApp (Tampilan)</label>
+                <input type="text" class="field-input" data-bind="personal.whatsapp" value="${p.whatsapp || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Link WhatsApp (Contoh: https://wa.me/62857...)</label>
+                <input type="text" class="field-input" data-bind="personal.whatsappLink" value="${p.whatsappLink || ''}" />
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Email Akademik / Bisnis</label>
+                <input type="text" class="field-input" data-bind="personal.email" value="${p.email || ''}" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Link LinkedIn</label>
+                <input type="text" class="field-input" data-bind="personal.linkedin" value="${p.linkedin || ''}" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Foto Penutup Booking (Closing Photo)</label>
+              <div class="photo-preview-box">
+                <img src="${p.closingImage || ''}" class="preview-thumbnail" alt="Closing Photo" />
+                <div class="preview-meta">
+                  <div class="preview-label">Closing Section Photo</div>
+                  <div class="preview-path">${p.closingImageWebp || p.closingImage || ''}</div>
+                  <button type="button" class="btn-secondary" onclick="window.cmsUploadClosingPhoto()">
+                    <i class="bi bi-camera"></i> Ganti & Unggah Foto Closing
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Settings HTML
+      function renderSettings() {
+        const pat = localStorage.getItem('nurul_cms_github_pat') || '';
+        const repo = localStorage.getItem('nurul_cms_github_repo') || 'ngaeninurul74-cell/portofolio-nurul-ngaeni';
+        return `
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-git"></i> Integrasi GitHub (Sync Otomatis di GitHub Pages)</h3>
+            <p style="color: var(--admin-text-secondary); font-size: 0.88rem; margin-bottom: 1.25rem; line-height: 1.6;">
+              Bila Anda mempublikasikan website di GitHub Pages, masukkan Personal Access Token (PAT) dengan akses <code>repo</code> agar perubahan CMS dapat langsung di-commit ke repositori secara real-time dari browser!
+            </p>
+            <div class="field-group">
+              <label class="field-label">GitHub Repository (owner/repo)</label>
+              <input type="text" id="setting-github-repo" class="field-input" value="${repo}" placeholder="username/nama-repo" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">GitHub Personal Access Token (PAT)</label>
+              <input type="password" id="setting-github-pat" class="field-input" value="${pat}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+            </div>
+            <button type="button" class="btn-primary" onclick="window.cmsSaveGitHubSettings()">
+              <i class="bi bi-check2-circle"></i> Simpan Pengaturan GitHub
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-key"></i> Ganti Password Akun Admin</h3>
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Password Baru</label>
+                <input type="password" id="setting-new-password" class="field-input" placeholder="Masukkan password baru" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Konfirmasi Password Baru</label>
+                <input type="password" id="setting-confirm-password" class="field-input" placeholder="Ulangi password baru" />
+              </div>
+            </div>
+            <button type="button" class="btn-secondary" onclick="window.cmsChangePassword()">
+              <i class="bi bi-shield-lock"></i> Perbarui Password Admin
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;"><i class="bi bi-cloud-arrow-down"></i> Backup &amp; Ekspor JSON</h3>
+            <p style="color: var(--admin-text-secondary); font-size: 0.88rem; margin-bottom: 1.25rem;">
+              Unduh cadangan seluruh data portofolio sebagai berkas <code>portfolioContent.json</code> untuk keperluan arsip lokal.
+            </p>
+            <button type="button" class="btn-secondary" onclick="window.cmsDownloadBackup()">
+              <i class="bi bi-download"></i> Unduh File Cadangan JSON
+            </button>
+          </div>
+        `;
+      }
+
+      // Attach Form Listeners
+      function attachFormListeners() {
+        document.querySelectorAll('[data-bind]').forEach(input => {
+          input.addEventListener('input', (e) => {
+            const path = (e.target as HTMLElement).getAttribute('data-bind') || '';
+            const val = (e.target as HTMLInputElement).value;
+            const parts = path.split('.');
+            let obj = workingContent;
+            for (let i = 0; i < parts.length - 1; i++) {
+              if (!obj[parts[i]]) obj[parts[i]] = {};
+              obj = obj[parts[i]];
+            }
+            obj[parts[parts.length - 1]] = val;
+            localStorage.setItem('nurul_cms_draft_data', JSON.stringify(workingContent));
+            markDirty();
+          });
+        });
+
+        document.querySelectorAll('[data-array-bind]').forEach(input => {
+          input.addEventListener('input', (e) => {
+            const path = (e.target as HTMLElement).getAttribute('data-array-bind') || '';
+            const val = (e.target as HTMLInputElement).value;
+            const parts = path.split('.');
+            let obj = workingContent;
+            for (let i = 0; i < parts.length - 1; i++) {
+              obj = obj[parts[i]];
+            }
+            obj[parts[parts.length - 1]] = val;
+            localStorage.setItem('nurul_cms_draft_data', JSON.stringify(workingContent));
+            markDirty();
+          });
+        });
+      }
+
+      // Global Window Actions for Admin Buttons
+      window.cmsUploadHeroPhoto = () => {
+        triggerImageUpload('landing_page_assets/hero', (path) => {
+          workingContent.personal.heroImage = path;
+          workingContent.personal.heroImageWebp = path;
+        });
+      };
+
+      window.cmsUploadAboutPhoto = () => {
+        triggerImageUpload('landing_page_assets/about', (path) => {
+          workingContent.personal.aboutImage = path;
+          workingContent.personal.aboutImageWebp = path;
+        });
+      };
+
+      window.cmsUploadClosingPhoto = () => {
+        triggerImageUpload('landing_page_assets/hero', (path) => {
+          workingContent.personal.closingImage = path;
+          workingContent.personal.closingImageWebp = path;
+        });
+      };
+
+      window.cmsAddPartner = () => {
+        if (!workingContent.partners) workingContent.partners = { title: '', items: [] };
+        workingContent.partners.items.push({ name: 'Mitra Baru', icon: 'bi bi-building' });
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsDeletePartner = (idx) => {
+        workingContent.partners.items.splice(idx, 1);
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsAddService = () => {
+        if (!workingContent.services) workingContent.services = [];
+        workingContent.services.push({
+          id: 'service-' + Date.now(),
+          title: 'Layanan Baru',
+          badge: 'Baru',
+          desc: 'Deskripsi kompetensi dan layanan.',
+          icon: 'bi bi-stars',
+          checklist: ['Poin pertama', 'Poin kedua']
+        });
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsDeleteService = (idx) => {
+        workingContent.services.splice(idx, 1);
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsAddGalleryPhoto = () => {
+        triggerImageUpload('landing_page_assets/gallery', (path) => {
+          if (!workingContent.gallery) workingContent.gallery = [];
+          workingContent.gallery.unshift({
+            id: 'photo-' + Date.now(),
+            category: 'mc',
+            categoryLabel: 'MC Event',
+            categoryIcon: 'bi bi-mic',
+            title: 'Dokumentasi Acara Baru',
+            desc: 'Keterangan dokumentasi kegiatan.',
+            image: path,
+            imageWebp: path
+          });
+          markDirty();
+          updateCounts();
+          renderActiveSection();
+        });
+      };
+
+      window.cmsReplaceGalleryImage = (idx) => {
+        triggerImageUpload('landing_page_assets/gallery', (path) => {
+          workingContent.gallery[idx].image = path;
+          workingContent.gallery[idx].imageWebp = path;
+          markDirty();
+          renderActiveSection();
+        });
+      };
+
+      window.cmsDeleteGallery = (idx) => {
+        if (confirm('Yakin ingin menghapus foto dokumentasi ini?')) {
+          workingContent.gallery.splice(idx, 1);
+          markDirty();
+          updateCounts();
+          renderActiveSection();
+        }
+      };
+
+      window.cmsAddAchievement = () => {
+        if (!workingContent.achievements) workingContent.achievements = [];
+        workingContent.achievements.push({
+          year: new Date().getFullYear().toString(),
+          title: 'Prestasi Baru',
+          subtitle: 'Keterangan Penyelenggara',
+          icon: 'bi bi-award-fill',
+          featured: false
+        });
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsDeleteAchievement = (idx) => {
+        workingContent.achievements.splice(idx, 1);
+        markDirty();
+        updateCounts();
+        renderActiveSection();
+      };
+
+      window.cmsSaveGitHubSettings = () => {
+        const repo = (document.getElementById('setting-github-repo') as HTMLInputElement)?.value;
+        const pat = (document.getElementById('setting-github-pat') as HTMLInputElement)?.value;
+        if (repo) localStorage.setItem('nurul_cms_github_repo', repo.trim());
+        if (pat) localStorage.setItem('nurul_cms_github_pat', pat.trim());
+        showToast('Pengaturan GitHub tersimpan dengan aman di browser!', 'success');
+      };
+
+      window.cmsChangePassword = async () => {
+        const newPass = (document.getElementById('setting-new-password') as HTMLInputElement)?.value;
+        const confirmPass = (document.getElementById('setting-confirm-password') as HTMLInputElement)?.value;
+        if (!newPass || newPass.length < 6) {
+          showToast('Password baru minimal 6 karakter!', 'error');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showToast('Konfirmasi password tidak cocok!', 'error');
+          return;
+        }
+        const hash = await sha256Hex(newPass);
+        localStorage.setItem('nurul_cms_pass_hash', hash);
+        showToast('Password admin berhasil diubah!', 'success');
+      };
+
+      window.cmsDownloadBackup = () => {
+        downloadJsonBackup();
+        showToast('File backup portfolioContent.json berhasil diunduh!');
+      };
+
+      // Authentication Initialization
+      function initAuth() {
+        const loginView = document.getElementById('login-view');
+        const adminView = document.getElementById('admin-view');
+        const isAuth = sessionStorage.getItem('nurul_admin_auth') === '1';
+
+        if (isAuth) {
+          if (loginView) loginView.style.display = 'none';
+          if (adminView) adminView.style.display = 'flex';
+          checkEnvironmentMode();
+          loadWorkingContent();
+          renderActiveSection();
+        } else {
+          if (loginView) loginView.style.display = 'flex';
+          if (adminView) adminView.style.display = 'none';
+        }
+
+        // Toggle Password Visibility
+        const toggleBtn = document.getElementById('toggle-password-btn');
+        const passInput = document.getElementById('login-password') as HTMLInputElement | null;
+        if (toggleBtn && passInput) {
+          toggleBtn.addEventListener('click', () => {
+            if (passInput.type === 'password') {
+              passInput.type = 'text';
+              toggleBtn.textContent = 'Sembunyikan';
+            } else {
+              passInput.type = 'password';
+              toggleBtn.textContent = 'Tampilkan';
+            }
+          });
+        }
+
+        // Login Form Submit
+        const loginForm = document.getElementById('login-form');
+        const alertBox = document.getElementById('login-alert');
+        if (loginForm) {
+          loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usernameInput = (document.getElementById('login-username') as HTMLInputElement)?.value.trim();
+            const passwordInput = (document.getElementById('login-password') as HTMLInputElement)?.value;
+
+            const { user, passHash } = getStoredCredentials();
+            const inputHash = await sha256Hex(passwordInput || '');
+
+            if (usernameInput === user && inputHash === passHash) {
+              sessionStorage.setItem('nurul_admin_auth', '1');
+              if (loginView) loginView.style.display = 'none';
+              if (adminView) adminView.style.display = 'flex';
+              checkEnvironmentMode();
+              loadWorkingContent();
+              renderActiveSection();
+              showToast('Selamat datang kembali, Nurul Ngaeni!');
+            } else {
+              if (alertBox) {
+                alertBox.style.display = 'flex';
+                alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i><span>Username atau password salah!</span>';
+              }
+            }
+          });
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', () => {
+            if (isDirty) {
+              if (!confirm('Anda memiliki perubahan yang belum disimpan. Yakin ingin keluar?')) return;
+            }
+            sessionStorage.removeItem('nurul_admin_auth');
+            location.reload();
+          });
+        }
+
+        // Sidebar Navigation
+        document.querySelectorAll('.nav-item').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeSection = btn.getAttribute('data-section') || 'overview';
+            renderActiveSection();
+          });
+        });
+
+        // Save All Button
+        const saveAllBtn = document.getElementById('save-all-btn');
+        if (saveAllBtn) {
+          saveAllBtn.addEventListener('click', saveAllChanges);
+        }
+
+        // Warn before leaving with unsaved changes
+        window.addEventListener('beforeunload', (e) => {
+          if (isDirty) {
+            e.preventDefault();
+            e.returnValue = '';
+          }
+        });
+      }
+
+      // Start on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAuth);
+      } else {
+        initAuth();
+      }
+    </script>
+  </body>
+</html>

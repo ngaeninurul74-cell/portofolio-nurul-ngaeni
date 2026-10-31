@@ -1,0 +1,73 @@
+---
+// src/components/Gallery.astro
+import { gallery } from '../data/portfolioData';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '') + '/';
+---
+
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-tag">PORTOFOLIO KEGIATAN</span>
+      <h2 class="section-title">Dokumentasi Aksi dan Rekam Jejak</h2>
+      <p class="section-desc">
+        Pilihan dokumentasi kegiatan nyata dari berbagai panggung, kelas edukasi, dan proyek sosial.
+      </p>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filter-wrapper" role="tablist" aria-label="Filter Kategori Galeri">
+      <button class="filter-btn active" data-filter="all" type="button">Semua Foto</button>
+      <button class="filter-btn" data-filter="mc" type="button">Master of Ceremony</button>
+      <button class="filter-btn" data-filter="moderator" type="button">Moderator</button>
+      <button class="filter-btn" data-filter="speaker" type="button">Narasumber</button>
+      <button class="filter-btn" data-filter="modeling" type="button">Model & Muse</button>
+      <button class="filter-btn" data-filter="organizations" type="button">Organisasi</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+      {gallery.map((item) => (
+        <div class="gallery-item" data-category={item.category}>
+          <div class="gallery-card" tabindex="0" role="button" aria-label={`Buka pratinjau ${item.title}`}>
+            <picture>
+              <source srcset={`${base}${item.imageWebp}`} type="image/webp" />
+              <img src={`${base}${item.image}`} alt={item.title} loading="lazy" />
+            </picture>
+            <div class="gallery-overlay">
+              <span class="cat-pill">
+                <i class={item.categoryIcon}></i> {item.categoryLabel}
+              </span>
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Filter logic
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filterValue = btn.getAttribute('data-filter') || 'all';
+
+      galleryItems.forEach((item) => {
+        const itemCategory = item.getAttribute('data-category');
+        if (filterValue === 'all' || itemCategory === filterValue) {
+          (item as HTMLElement).style.display = 'block';
+        } else {
+          (item as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
