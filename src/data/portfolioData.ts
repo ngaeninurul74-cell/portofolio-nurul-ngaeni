@@ -135,3 +135,4 @@ export const contact: ContactData = content.contact;
 export const footer: FooterData = content.footer;
 
 export const rawPortfolioContent = content;
+
